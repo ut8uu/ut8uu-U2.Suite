@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>U2 Logger</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-[#2a2a2a] text-white p-4">
+    <div class="max-w-4xl mx-auto space-y-4">
+
+        <!-- Callsign Section -->
+        <div class="p-3 bg-[#333] rounded-xl shadow-lg">
+            <label for="callsign" class="text-yellow-400 block mb-2">Callsign</label>
+            <input type="text" id="callsign" value="KB9IPF" class="w-full p-2 bg-[#444] text-white border-none rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400">
+        </div>
+
+        <!-- Snt/Rcvd/Name/Comment Section -->
+        <div class="grid grid-cols-4 gap-2 p-3 bg-[#333] rounded-xl shadow-lg">
+            <div>
+                <label for="sent" class="text-yellow-400 block mb-2">Snt</label>
+                <input type="text" id="sent" value="59" class="w-full p-2 bg-[#444] text-white border-none rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400">
+            </div>
+            <div>
+                <label for="received" class="text-yellow-400 block mb-2">Rcvd</label>
+                <input type="text" id="received" value="59" class="w-full p-2 bg-[#444] text-white border-none rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400">
+            </div>
+            <div>
+                <label for="name" class="text-yellow-400 block mb-2">Name</label>
+                <input type="text" id="name" class="w-full p-2 bg-[#444] text-white border-none rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400">
+            </div>
+            <div>
+                <label for="comment" class="text-yellow-400 block mb-2">Comment</label>
+                <input type="text" id="comment" class="w-full p-2 bg-[#444] text-white border-none rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400">
+            </div>
+        </div>
+
+        <!-- Date/Time Section -->
+        <div class="p-3 bg-[#333] rounded-xl shadow-lg flex items-center space-x-2">
+            <span class="text-yellow-400">Date/Time</span>
+            <div class="flex items-center space-x-2">
+                <input type="checkbox" id="real-time" checked class="form-checkbox text-yellow-400 rounded-sm bg-[#444] border-none focus:ring-2 focus:ring-yellow-400">
+                <label for="real-time" class="text-white">Real-time</label>
+            </div>
+            <div class="flex items-center space-x-2">
+                <input type="checkbox" id="utc" checked class="form-checkbox text-yellow-400 rounded-sm bg-[#444] border-none focus:ring-2 focus:ring-yellow-400">
+                <label for="utc" class="text-white">UTC</label>
+            </div>
+            <div id="date-time" class="text-white ml-auto"></div>
+        </div>
+
+        <!-- Band/Mode/Propagation Section -->
+        <div class="grid grid-cols-3 gap-2 p-3 bg-[#333] rounded-xl shadow-lg">
+            <div>
+                <label for="band" class="text-yellow-400 block mb-2">Band</label>
+                <select id="band" class="w-full p-2 bg-[#444] text-white border-none rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"></select>
+            </div>
+            <div>
+                <label for="mode" class="text-yellow-400 block mb-2">Mode</label>
+                <select id="mode" class="w-full p-2 bg-[#444] text-white border-none rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"></select>
+            </div>
+            <div>
+                <label for="propagation" class="text-yellow-400 block mb-2">Propagation</label>
+                <select id="propagation" class="w-full p-2 bg-[#444] text-white border-none rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"></select>
+            </div>
+        </div>
+
+        <!-- Function Buttons Section -->
+        <div class="grid grid-cols-6 gap-2 p-3 bg-[#333] rounded-xl shadow-lg">
+            <button class="p-3 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F1 Spare</button>
+            <button class="p-3 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F2 Spare</button>
+            <button class="p-3 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F3 Spare</button>
+            <button class="p-3 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F4 Spare</button>
+            <button class="p-3 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F5 Spare</button>
+            <button class="p-3 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F6 Spare</button>
+            <button class="p-3 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F7 Spare</button>
+            <button class="p-3 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F8 Spare</button>
+            <button class="p-3 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F9 Spare</button>
+            <button class="p-3 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F10 Spare</button>
+            <button class="p-3 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F11 Spare</button>
+            <button class="p-3 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F12 Wipe</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const bands = [
+                "160 m (1.8-2.0 MHz)",
+                "80 m (3.5-4.0 MHz)",
+                "60 m (5.3-5.4 MHz)",
+                "40 m (7.0-7.3 MHz)",
+                "30 m (10.1-10.15 MHz)",
+                "20 m (14.0-14.35 MHz)",
+                "17 m (18.068-18.168 MHz)",
+                "15 m (21.0-21.45 MHz)",
+                "12 m (24.89-24.99 MHz)",
+                "10 m (28.0-29.7 MHz)",
+                "6 m (50-54 MHz)",
+                "2 m (144-148 MHz)",
+                "1.25 m (222-225 MHz)",
+                "70 cm (420-450 MHz)",
+                "33 cm (902-928 MHz)",
+                "23 cm (1240-1300 MHz)",
+                "13 cm (2300-2450 MHz)",
+                "6 cm (5650-5925 MHz)",
+                "3 cm (10-10.5 GHz)",
+                "1.25 cm (24-24.25 GHz)"
+            ];
+
+            const modes = [
+                "AM", "ATV", "BPSK", "CW", "Data", "DIGITALVOICE", "DSTAR", "DV", "FAX", "FM", "FT8", "HELL", "MFSK", "MS", "MT63", "OLIVIA", "PACKET", "PSK31", "RTTY", "SSTV", "SSB", "THROB", "TOR", "V4", "VOI", "WSPR"
+            ].sort();
+
+            const propagations = [
+                "", "Ionospheric", "Satellite", "EME", "Aurora", "Sporadic E", "Meteor Scatter", "Tropospheric Ducting", "Ground Wave"
+            ].sort();
+
+            const bandSelect = document.getElementById('band');
+            const modeSelect = document.getElementById('mode');
+            const propagationSelect = document.getElementById('propagation');
+            const dateTimeDisplay = document.getElementById('date-time');
+
+            // Populate bands
+            bands.forEach(band => {
+                const option = document.createElement('option');
+                option.value = band;
+                option.textContent = band;
+                bandSelect.appendChild(option);
+            });
+
+            // Populate modes
+            modes.forEach(mode => {
+                const option = document.createElement('option');
+                option.value = mode;
+                option.textContent = mode;
+                modeSelect.appendChild(option);
+            });
+
+            // Populate propagations
+            propagations.forEach(prop => {
+                const option = document.createElement('option');
+                option.value = prop;
+                option.textContent = prop;
+                propagationSelect.appendChild(option);
+            });
+            
+            // Set initial values from the image
+            modeSelect.value = "CW";
+            bandSelect.value = "160 m (1.8-2.0 MHz)";
+
+            // Update date and time
+            function updateDateTime() {
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = (now.getMonth() + 1).toString().padStart(2, '0');
+                const day = now.getDate().toString().padStart(2, '0');
+                const hours = now.getHours().toString().padStart(2, '0');
+                const minutes = now.getMinutes().toString().padStart(2, '0');
+                const seconds = now.getSeconds().toString().padStart(2, '0');
+                dateTimeDisplay.textContent = `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
+            }
+
+            setInterval(updateDateTime, 1000);
+            updateDateTime();
+        });
+    </script>
+</body>
+</html>
