@@ -85,6 +85,13 @@
             <button id="saveButton" class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F11 Save</button>
             <button class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F12 Wipe</button>
         </div>
+
+        <!-- New Row of Buttons -->
+        <div class="grid grid-cols-3 gap-1 p-1 bg-[#333] rounded-xl shadow-lg">
+            <button id="listButton" class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">List</button>
+            <button id="saveButton2" class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">Save</button>
+            <button id="wipeButton" class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">Wipe</button>
+        </div>
     </div>
 
     <script>
@@ -124,6 +131,12 @@
             const modeSelect = document.getElementById('mode');
             const propagationSelect = document.getElementById('propagation');
             const dateTimeDisplay = document.getElementById('date-time');
+            const callsignInput = document.getElementById('callsign');
+            const nameInput = document.getElementById('name');
+            const commentInput = document.getElementById('comment');
+            const sentInput = document.getElementById('sent');
+            const receivedInput = document.getElementById('received');
+
 
             // Populate bands
             bands.forEach(band => {
@@ -169,7 +182,6 @@
             updateDateTime();
 
             // Callsign input validation
-            const callsignInput = document.getElementById('callsign');
             const allowedChars = '0123456789/QWERTYUIOPASDFGHJKLZXCVBNM';
             callsignInput.addEventListener('input', (event) => {
                 let filteredValue = '';
@@ -185,14 +197,14 @@
             // Function to save the QSO
             const saveQSO = async () => {
                 const qso = {
-                    Callsign: document.getElementById('callsign').value,
-                    Snt: document.getElementById('sent').value,
-                    Rcvd: document.getElementById('received').value,
-                    Name: document.getElementById('name').value,
-                    Comment: document.getElementById('comment').value,
-                    Band: document.getElementById('band').value,
-                    Mode: document.getElementById('mode').value,
-                    Propagation: document.getElementById('propagation').value,
+                    Callsign: callsignInput.value,
+                    Snt: sentInput.value,
+                    Rcvd: receivedInput.value,
+                    Name: nameInput.value,
+                    Comment: commentInput.value,
+                    Band: bandSelect.value,
+                    Mode: modeSelect.value,
+                    Propagation: propagationSelect.value,
                     DateTime: new Date().toISOString()
                 };
 
@@ -208,9 +220,9 @@
                     if (response.ok) {
                         console.log('QSO saved successfully!');
                         // Clear fields after successful save
-                        document.getElementById('callsign').value = '';
-                        document.getElementById('name').value = '';
-                        document.getElementById('comment').value = '';
+                        callsignInput.value = '';
+                        nameInput.value = '';
+                        commentInput.value = '';
 
                     } else {
                         console.error('Failed to save QSO:', response.statusText);
@@ -219,18 +231,41 @@
                     console.error('Error saving QSO:', error);
                 }
             };
+            
+            // Function to wipe fields
+            const wipeFields = () => {
+                callsignInput.value = '';
+                sentInput.value = '59';
+                receivedInput.value = '59';
+                nameInput.value = '';
+                commentInput.value = '';
+            };
+            
+            // Placeholder function for list
+            const listQSOs = () => {
+                console.log('List QSOs functionality not yet implemented.');
+            };
 
-            // Event listener for F11 Save button
+            // Event listeners for Save buttons and F11/Enter keypress
             const saveButton = document.getElementById('saveButton');
+            const saveButton2 = document.getElementById('saveButton2');
             saveButton.addEventListener('click', saveQSO);
+            saveButton2.addEventListener('click', saveQSO);
 
-            // Event listener for F11 and Enter keypress
             document.addEventListener('keydown', (event) => {
                 if (event.key === 'F11' || event.key === 'Enter') {
-                    event.preventDefault(); // Prevent browser default action for F11/Enter
+                    event.preventDefault(); 
                     saveQSO();
                 }
             });
+            
+            // Event listener for Wipe button
+            const wipeButton = document.getElementById('wipeButton');
+            wipeButton.addEventListener('click', wipeFields);
+            
+            // Event listener for List button
+            const listButton = document.getElementById('listButton');
+            listButton.addEventListener('click', listQSOs);
         });
     </script>
 </body>
