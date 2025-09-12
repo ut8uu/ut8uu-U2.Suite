@@ -82,7 +82,7 @@
             <button class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F8 Spare</button>
             <button class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F9 Spare</button>
             <button class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F10 Spare</button>
-            <button class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F11 Save</button>
+            <button id="saveButton" class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F11 Save</button>
             <button class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F12 Wipe</button>
         </div>
     </div>
@@ -180,6 +180,56 @@
                     }
                 }
                 event.target.value = filteredValue;
+            });
+            
+            // Function to save the QSO
+            const saveQSO = async () => {
+                const qso = {
+                    Callsign: document.getElementById('callsign').value,
+                    Snt: document.getElementById('sent').value,
+                    Rcvd: document.getElementById('received').value,
+                    Name: document.getElementById('name').value,
+                    Comment: document.getElementById('comment').value,
+                    Band: document.getElementById('band').value,
+                    Mode: document.getElementById('mode').value,
+                    Propagation: document.getElementById('propagation').value,
+                    DateTime: new Date().toISOString()
+                };
+
+                try {
+                    const response = await fetch('https://localhost:7154/api/v1/QSOs', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(qso),
+                    });
+
+                    if (response.ok) {
+                        console.log('QSO saved successfully!');
+                        // Clear fields after successful save
+                        document.getElementById('callsign').value = '';
+                        document.getElementById('name').value = '';
+                        document.getElementById('comment').value = '';
+
+                    } else {
+                        console.error('Failed to save QSO:', response.statusText);
+                    }
+                } catch (error) {
+                    console.error('Error saving QSO:', error);
+                }
+            };
+
+            // Event listener for F11 Save button
+            const saveButton = document.getElementById('saveButton');
+            saveButton.addEventListener('click', saveQSO);
+
+            // Event listener for F11 and Enter keypress
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'F11' || event.key === 'Enter') {
+                    event.preventDefault(); // Prevent browser default action for F11/Enter
+                    saveQSO();
+                }
             });
         });
     </script>
