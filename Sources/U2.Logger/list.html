@@ -12,6 +12,10 @@
             color: white;
             padding: 1rem;
         }
+        th.sortable {
+            cursor: pointer;
+            user-select: none;
+        }
     </style>
 </head>
 <body>
@@ -30,96 +34,120 @@
             const qsoTableContainer = document.getElementById('qsoTableContainer');
             const paginationContainer = document.getElementById('paginationContainer');
 
-            try {
-                const response = await fetch('https://localhost:7154/api/v1/QSOs');
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+            let pageSize = 50;
+            let currentPage = 1;
+            let currentSortKey = 'dateTime';
+            let sortDirection = 'desc';
+
+            const fetchQSOs = async () => {
+                try {
+                    const url = `https://localhost:7154/api/v1/QSOs?pageNumber=${currentPage}&pageSize=${pageSize}&sortKey=${currentSortKey}&sortDirection=${sortDirection}`;
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    
+                    const totalCount = parseInt(response.headers.get('X-Total-Count'), 10);
+                    renderTable(data, totalCount);
+                } catch (error) {
+                    qsoTableContainer.innerHTML = `<p class="text-red-500">Error fetching QSOs: ${error.message}</p>`;
+                    console.error('Error fetching QSOs:', error);
                 }
-                const qsos = await response.json();
+            };
+            
+            const renderTable = (qsos, totalCount) => {
+                const totalPages = Math.ceil(totalCount / pageSize);
 
-                let pageSize = 50;
-                let currentPage = 1;
+                const tableRows = qsos.map(qso => `
+                    <tr class="odd:bg-[#444] even:bg-[#3b3b3b]">
+                        <td class="p-2 border border-gray-600">${qso.callsign}</td>
+                        <td class="p-2 border border-gray-600">${qso.snt}</td>
+                        <td class="p-2 border border-gray-600">${qso.rcvd}</td>
+                        <td class="p-2 border border-gray-600">${qso.name}</td>
+                        <td class="p-2 border border-gray-600">${qso.comment}</td>
+                        <td class="p-2 border border-gray-600">${new Date(qso.dateTime).toLocaleString()}</td>
+                        <td class="p-2 border border-gray-600">${qso.band}</td>
+                        <td class="p-2 border border-gray-600">${qso.mode}</td>
+                        <td class="p-2 border border-gray-600">${qso.propagation}</td>
+                    </tr>
+                `).join('');
 
-                const renderTable = (page) => {
-                    const totalPages = Math.ceil(qsos.length / pageSize);
-                    const start = (page - 1) * pageSize;
-                    const end = start + pageSize;
-                    const currentQSOs = qsos.slice(start, end);
-
-                    const tableRows = currentQSOs.map(qso => `
-                        <tr class="odd:bg-[#444] even:bg-[#3b3b3b]">
-                            <td class="p-2 border border-gray-600">${qso.callsign}</td>
-                            <td class="p-2 border border-gray-600">${qso.snt}</td>
-                            <td class="p-2 border border-gray-600">${qso.rcvd}</td>
-                            <td class="p-2 border border-gray-600">${qso.name}</td>
-                            <td class="p-2 border border-gray-600">${qso.comment}</td>
-                            <td class="p-2 border border-gray-600">${new Date(qso.dateTime).toLocaleString()}</td>
-                            <td class="p-2 border border-gray-600">${qso.band}</td>
-                            <td class="p-2 border border-gray-600">${qso.mode}</td>
-                            <td class="p-2 border border-gray-600">${qso.propagation}</td>
-                        </tr>
-                    `).join('');
-
-                    qsoTableContainer.innerHTML = `
-                        <table class="w-full text-left border-collapse border border-gray-600 rounded-lg">
-                            <thead>
-                                <tr class="bg-[#333]">
-                                    <th class="p-2 border border-gray-600">Callsign</th>
-                                    <th class="p-2 border border-gray-600">Snt</th>
-                                    <th class="p-2 border border-gray-600">Rcvd</th>
-                                    <th class="p-2 border border-gray-600">Name</th>
-                                    <th class="p-2 border border-gray-600">Comment</th>
-                                    <th class="p-2 border border-gray-600">Date/Time</th>
-                                    <th class="p-2 border border-gray-600">Band</th>
-                                    <th class="p-2 border border-gray-600">Mode</th>
-                                    <th class="p-2 border border-gray-600">Prop.</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${tableRows}
-                            </tbody>
-                        </table>
-                    `;
-
-                    paginationContainer.innerHTML = `
-                        <button id="firstPage" class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">&lt;&lt;</button>
-                        <button id="prevPage" class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">&lt;</button>
-                        <select id="pageSize" class="p-2 bg-[#444] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400">
-                            <option value="50" ${pageSize === 50 ? 'selected' : ''}>50</option>
-                            <option value="100" ${pageSize === 100 ? 'selected' : ''}>100</option>
-                            <option value="200" ${pageSize === 200 ? 'selected' : ''}>200</option>
-                            <option value="500" ${pageSize === 500 ? 'selected' : ''}>500</option>
-                            <option value="1000" ${pageSize === 1000 ? 'selected' : ''}>1000</option>
-                        </select>
-                        <span class="p-2 bg-[#444] text-white rounded-md">Page ${currentPage} of ${totalPages}</span>
-                        <button id="nextPage" class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">&gt;</button>
-                        <button id="lastPage" class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">&gt;&gt;</button>
-                    `;
-
-                    // Re-attach event listeners for pagination
-                    const firstPageButton = paginationContainer.querySelector('#firstPage');
-                    const prevPageButton = paginationContainer.querySelector('#prevPage');
-                    const nextPageButton = paginationContainer.querySelector('#nextPage');
-                    const lastPageButton = paginationContainer.querySelector('#lastPage');
-                    const pageSizeSelect = paginationContainer.querySelector('#pageSize');
-
-                    if (firstPageButton) firstPageButton.addEventListener('click', () => { currentPage = 1; renderTable(currentPage); });
-                    if (prevPageButton) prevPageButton.addEventListener('click', () => { if (currentPage > 1) { currentPage--; renderTable(currentPage); } });
-                    if (nextPageButton) nextPageButton.addEventListener('click', () => { if (currentPage < totalPages) { currentPage++; renderTable(currentPage); } });
-                    if (lastPageButton) lastPageButton.addEventListener('click', () => { currentPage = totalPages; renderTable(currentPage); });
-                    if (pageSizeSelect) pageSizeSelect.addEventListener('change', (e) => {
-                        pageSize = parseInt(e.target.value, 10);
-                        currentPage = 1; // Reset to first page when page size changes
-                        renderTable(currentPage);
-                    });
+                const getSortIndicator = (key) => {
+                    if (key !== currentSortKey) return '';
+                    return sortDirection === 'asc' ? '▲' : '▼';
                 };
 
-                renderTable(currentPage);
+                qsoTableContainer.innerHTML = `
+                    <table class="w-full text-left border-collapse border border-gray-600 rounded-lg">
+                        <thead>
+                            <tr class="bg-[#333]">
+                                <th class="p-2 border border-gray-600 sortable" data-sort-key="callsign">Callsign <span class="sort-indicator">${getSortIndicator('callsign')}</span></th>
+                                <th class="p-2 border border-gray-600">Snt</th>
+                                <th class="p-2 border border-gray-600">Rcvd</th>
+                                <th class="p-2 border border-gray-600">Name</th>
+                                <th class="p-2 border border-gray-600">Comment</th>
+                                <th class="p-2 border border-gray-600 sortable" data-sort-key="dateTime">Date/Time <span class="sort-indicator">${getSortIndicator('dateTime')}</span></th>
+                                <th class="p-2 border border-gray-600 sortable" data-sort-key="band">Band <span class="sort-indicator">${getSortIndicator('band')}</span></th>
+                                <th class="p-2 border border-gray-600 sortable" data-sort-key="mode">Mode <span class="sort-indicator">${getSortIndicator('mode')}</span></th>
+                                <th class="p-2 border border-gray-600">Prop.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${tableRows}
+                        </tbody>
+                    </table>
+                `;
 
-            } catch (error) {
-                qsoTableContainer.innerHTML = `<p class="text-red-500">Error fetching QSOs: ${error.message}</p>`;
-                console.error('Error fetching QSOs:', error);
-            }
+                paginationContainer.innerHTML = `
+                    <button id="firstPage" class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">&lt;&lt;</button>
+                    <button id="prevPage" class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">&lt;</button>
+                    <select id="pageSize" class="p-2 bg-[#444] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                        <option value="50" ${pageSize === 50 ? 'selected' : ''}>50</option>
+                        <option value="100" ${pageSize === 100 ? 'selected' : ''}>100</option>
+                        <option value="200" ${pageSize === 200 ? 'selected' : ''}>200</option>
+                        <option value="500" ${pageSize === 500 ? 'selected' : ''}>500</option>
+                        <option value="1000" ${pageSize === 1000 ? 'selected' : ''}>1000</option>
+                    </select>
+                    <span class="p-2 bg-[#444] text-white rounded-md">Page ${currentPage} of ${totalPages}</span>
+                    <button id="nextPage" class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">&gt;</button>
+                    <button id="lastPage" class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">&gt;&gt;</button>
+                `;
+
+                // Re-attach event listeners for pagination
+                const firstPageButton = paginationContainer.querySelector('#firstPage');
+                const prevPageButton = paginationContainer.querySelector('#prevPage');
+                const nextPageButton = paginationContainer.querySelector('#nextPage');
+                const lastPageButton = paginationContainer.querySelector('#lastPage');
+                const pageSizeSelect = paginationContainer.querySelector('#pageSize');
+
+                if (firstPageButton) firstPageButton.addEventListener('click', () => { currentPage = 1; fetchQSOs(); });
+                if (prevPageButton) prevPageButton.addEventListener('click', () => { if (currentPage > 1) { currentPage--; fetchQSOs(); } });
+                if (nextPageButton) nextPageButton.addEventListener('click', () => { if (currentPage < totalPages) { currentPage++; fetchQSOs(); } });
+                if (lastPageButton) lastPageButton.addEventListener('click', () => { currentPage = totalPages; fetchQSOs(); });
+                if (pageSizeSelect) pageSizeSelect.addEventListener('change', (e) => {
+                    pageSize = parseInt(e.target.value, 10);
+                    currentPage = 1; // Reset to first page when page size changes
+                    fetchQSOs();
+                });
+
+                // Add event listeners for sorting
+                document.querySelectorAll('th.sortable').forEach(header => {
+                    header.addEventListener('click', () => {
+                        const key = header.getAttribute('data-sort-key');
+                        if (currentSortKey === key) {
+                            sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+                        } else {
+                            currentSortKey = key;
+                            sortDirection = 'asc';
+                        }
+                        currentPage = 1; // Reset to first page on new sort
+                        fetchQSOs();
+                    });
+                });
+            };
+
+            fetchQSOs();
         });
     </script>
 </body>

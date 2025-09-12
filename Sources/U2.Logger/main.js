@@ -12,7 +12,20 @@ function createMainWindow() {
         }
     });
 
-    win.loadFile(path.join(__dirname, 'index.html'));
+    win.loadFile('index.html');
+    win.setMenu(null);
+
+    // Listen for the 'close' event on the main window.
+    // When the main window is closed, we will find and close any other open windows.
+    win.on('close', () => {
+        const allWindows = BrowserWindow.getAllWindows();
+        allWindows.forEach(window => {
+            // Do not close the main window itself, as it is already being closed.
+            if (window.id !== win.id) {
+                window.close();
+            }
+        });
+    });
 }
 
 function createListWindow() {
@@ -26,8 +39,8 @@ function createListWindow() {
         }
     });
 
-    listWin.loadFile(path.join(__dirname, 'list.html'));
-    listWin.setMenu(null); // Optional: Remove the menu bar for a cleaner look
+    listWin.loadFile('list.html');
+    //listWin.setMenu(null); // Optional: Remove the menu bar for a cleaner look
 }
 
 app.whenReady().then(() => {
