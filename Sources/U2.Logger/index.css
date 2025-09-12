@@ -56,7 +56,7 @@ body {
     outline: 2px solid var(--highlight-color);
     outline-offset: 2px;
 }
-
+        
 .form-input-callsign {
     font-size: var(--font-size-2xl);
 }
@@ -121,4 +121,10 @@ body {
 
 .text-xs-force {
     font-size: var(--font-size-xs) !important;
+}
+
+.date-time-display {
+    font-size: var(--font-size-xs);
+    color: var(--text-color);
+    margin-left: auto;
 }
