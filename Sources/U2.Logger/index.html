@@ -173,9 +173,27 @@
                 propagationSelect.appendChild(option);
             });
             
-            // Set initial values from the image
+            // Set initial values
             modeSelect.value = "CW";
             bandSelect.value = "160 m (1.8-2.0 MHz)";
+            
+            // Function to update sent and received fields based on mode
+            const updateSignalReports = () => {
+                const mode = modeSelect.value;
+                if (mode === "CW") {
+                    sentInput.value = "599";
+                    receivedInput.value = "599";
+                } else if (["AM", "DIGITALVOICE", "SSB", "FM"].includes(mode)) {
+                    sentInput.value = "59";
+                    receivedInput.value = "59";
+                } else {
+                    sentInput.value = "";
+                    receivedInput.value = "";
+                }
+            };
+            
+            // Event listener for mode change
+            modeSelect.addEventListener('change', updateSignalReports);
 
             // Update date and time for the real-time display
             let dateTimeInterval;
@@ -240,6 +258,7 @@
 
             // Set initial UI state
             toggleDateTimeControls();
+            updateSignalReports();
             
             // Callsign input validation
             const allowedChars = '0123456789/QWERTYUIOPASDFGHJKLZXCVBNM';
@@ -304,6 +323,7 @@
                         callsignInput.value = '';
                         nameInput.value = '';
                         commentInput.value = '';
+                        updateSignalReports(); // Set default values based on current mode
 
                     } else {
                         console.error('Failed to save QSO:', response.statusText);
