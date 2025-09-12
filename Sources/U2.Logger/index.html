@@ -72,18 +72,18 @@
 
         <!-- Function Buttons Section -->
         <div class="grid grid-cols-6 gap-1 p-1 bg-[#333] rounded-xl shadow-lg">
-            <button class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F1 Spare</button>
-            <button class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F2 Spare</button>
-            <button class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F3 Spare</button>
-            <button class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F4 Spare</button>
-            <button class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F5 Spare</button>
-            <button class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F6 Spare</button>
-            <button class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F7 Spare</button>
-            <button class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F8 Spare</button>
-            <button class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F9 Spare</button>
-            <button class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F10 Spare</button>
-            <button id="saveButton" class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F11 Save</button>
-            <button class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F12 Wipe</button>
+            <button id="f1Button" class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F1 Spare</button>
+            <button id="f2Button" class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F2 Spare</button>
+            <button id="f3Button" class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F3 Spare</button>
+            <button id="f4Button" class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F4 Spare</button>
+            <button id="f5Button" class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F5 Spare</button>
+            <button id="f6Button" class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F6 Spare</button>
+            <button id="f7Button" class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F7 Spare</button>
+            <button id="f8Button" class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F8 Spare</button>
+            <button id="f9Button" class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F9 Spare</button>
+            <button id="f10Button" class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F10 Spare</button>
+            <button id="f11Button" class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F11 Save</button>
+            <button id="f12Button" class="p-2 bg-[#444] text-white rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F12 Wipe</button>
         </div>
 
         <!-- New Row of Buttons -->
@@ -247,9 +247,9 @@
             };
 
             // Event listeners for Save buttons and F11/Enter keypress
-            const saveButton = document.getElementById('saveButton');
+            const f11Button = document.getElementById('f11Button');
             const saveButton2 = document.getElementById('saveButton2');
-            saveButton.addEventListener('click', saveQSO);
+            f11Button.addEventListener('click', saveQSO);
             saveButton2.addEventListener('click', saveQSO);
 
             document.addEventListener('keydown', (event) => {
