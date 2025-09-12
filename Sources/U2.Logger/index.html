@@ -192,6 +192,24 @@
                 dateTimeDisplay.textContent = `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
             }
 
+            function updateManualDateTimePickers() {
+                const now = new Date();
+                let date, hours, minutes;
+            
+                if (utcCheckbox.checked) {
+                    date = `${now.getUTCFullYear()}-${(now.getUTCMonth() + 1).toString().padStart(2, '0')}-${now.getUTCDate().toString().padStart(2, '0')}`;
+                    hours = now.getUTCHours().toString().padStart(2, '0');
+                    minutes = now.getUTCMinutes().toString().padStart(2, '0');
+                } else {
+                    date = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}`;
+                    hours = now.getHours().toString().padStart(2, '0');
+                    minutes = now.getMinutes().toString().padStart(2, '0');
+                }
+            
+                datePicker.value = date;
+                timePicker.value = `${hours}:${minutes}`;
+            }
+
             function toggleDateTimeControls() {
                 if (realTimeCheckbox.checked) {
                     realTimeControls.classList.remove('hidden');
@@ -205,6 +223,7 @@
                     manualDateTimeControls.classList.remove('hidden');
                     clearInterval(dateTimeInterval);
                     dateTimeInterval = null;
+                    updateManualDateTimePickers(); // Initialize pickers when switching to manual mode
                 }
             }
 
@@ -213,6 +232,9 @@
                 // If real-time is enabled, just update the display
                 if (realTimeCheckbox.checked) {
                     updateDateTimeDisplay();
+                } else {
+                    // If manual mode, update the pickers
+                    updateManualDateTimePickers();
                 }
             });
 
