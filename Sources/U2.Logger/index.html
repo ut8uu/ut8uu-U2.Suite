@@ -44,11 +44,20 @@
                 <input type="checkbox" id="real-time" checked class="form-checkbox">
                 <label for="real-time" class="text-xs-force text-white">Real-time</label>
             </div>
+            
             <div class="flex items-center space-x-0.5">
                 <input type="checkbox" id="utc" checked class="form-checkbox">
                 <label for="utc" class="text-xs-force text-white">UTC</label>
             </div>
-            <div id="date-time" class="date-time-display"></div>
+
+            <div id="real-time-controls" class="flex items-center space-x-0.5">
+                <div id="date-time" class="date-time-display"></div>
+            </div>
+
+            <div id="manual-date-time-controls" class="flex-grow flex items-center space-x-2 hidden">
+                <input type="date" id="date-picker" class="form-input text-xs-force flex-grow">
+                <input type="time" id="time-picker" class="form-input text-xs-force flex-grow">
+            </div>
         </div>
 
         <!-- Band/Mode/Propagation Section -->
@@ -135,6 +144,10 @@
             const receivedInput = document.getElementById('received');
             const realTimeCheckbox = document.getElementById('real-time');
             const utcCheckbox = document.getElementById('utc');
+            const realTimeControls = document.getElementById('real-time-controls');
+            const manualDateTimeControls = document.getElementById('manual-date-time-controls');
+            const datePicker = document.getElementById('date-picker');
+            const timePicker = document.getElementById('time-picker');
             
             // Populate bands
             bands.forEach(band => {
@@ -164,40 +177,48 @@
             modeSelect.value = "CW";
             bandSelect.value = "160 m (1.8-2.0 MHz)";
 
-            // Update date and time
+            // Update date and time for the real-time display
             let dateTimeInterval;
-
-            function updateDateTime() {
+            function updateDateTimeDisplay() {
                 const now = new Date();
-                const dateToUse = utcCheckbox.checked ? now : new Date();
-
-                const year = utcCheckbox.checked ? dateToUse.getUTCFullYear() : dateToUse.getFullYear();
-                const month = (utcCheckbox.checked ? dateToUse.getUTCMonth() + 1 : dateToUse.getMonth() + 1).toString().padStart(2, '0');
-                const day = (utcCheckbox.checked ? dateToUse.getUTCDate() : dateToUse.getDate()).toString().padStart(2, '0');
-                const hours = (utcCheckbox.checked ? dateToUse.getUTCHours() : dateToUse.getHours()).toString().padStart(2, '0');
-                const minutes = (utcCheckbox.checked ? dateToUse.getUTCMinutes() : dateToUse.getMinutes()).toString().padStart(2, '0');
-                const seconds = (utcCheckbox.checked ? dateToUse.getUTCSeconds() : dateToUse.getSeconds()).toString().padStart(2, '0');
+                
+                const year = utcCheckbox.checked ? now.getUTCFullYear() : now.getFullYear();
+                const month = (utcCheckbox.checked ? now.getUTCMonth() + 1 : now.getMonth() + 1).toString().padStart(2, '0');
+                const day = (utcCheckbox.checked ? now.getUTCDate() : now.getDate()).toString().padStart(2, '0');
+                const hours = (utcCheckbox.checked ? now.getUTCHours() : now.getHours()).toString().padStart(2, '0');
+                const minutes = (utcCheckbox.checked ? now.getUTCMinutes() : now.getMinutes()).toString().padStart(2, '0');
+                const seconds = (utcCheckbox.checked ? now.getUTCSeconds() : now.getSeconds()).toString().padStart(2, '0');
                 
                 dateTimeDisplay.textContent = `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
             }
 
-            function startInterval() {
+            function toggleDateTimeControls() {
                 if (realTimeCheckbox.checked) {
+                    realTimeControls.classList.remove('hidden');
+                    manualDateTimeControls.classList.add('hidden');
                     if (!dateTimeInterval) {
-                        updateDateTime();
-                        dateTimeInterval = setInterval(updateDateTime, 1000);
+                        updateDateTimeDisplay();
+                        dateTimeInterval = setInterval(updateDateTimeDisplay, 1000);
                     }
                 } else {
+                    realTimeControls.classList.add('hidden');
+                    manualDateTimeControls.classList.remove('hidden');
                     clearInterval(dateTimeInterval);
                     dateTimeInterval = null;
                 }
             }
 
-            realTimeCheckbox.addEventListener('change', startInterval);
-            utcCheckbox.addEventListener('change', updateDateTime);
+            realTimeCheckbox.addEventListener('change', toggleDateTimeControls);
+            utcCheckbox.addEventListener('change', () => {
+                // If real-time is enabled, just update the display
+                if (realTimeCheckbox.checked) {
+                    updateDateTimeDisplay();
+                }
+            });
 
-            startInterval();
-
+            // Set initial UI state
+            toggleDateTimeControls();
+            
             // Callsign input validation
             const allowedChars = '0123456789/QWERTYUIOPASDFGHJKLZXCVBNM';
             callsignInput.addEventListener('input', (event) => {
@@ -213,6 +234,27 @@
             
             // Function to save the QSO
             const saveQSO = async () => {
+                let qsoDateTime;
+                if (realTimeCheckbox.checked) {
+                    qsoDateTime = new Date().toISOString();
+                } else {
+                    const dateVal = datePicker.value;
+                    const timeVal = timePicker.value;
+                    if (dateVal && timeVal) {
+                        if (utcCheckbox.checked) {
+                            // User input is already in UTC
+                            qsoDateTime = new Date(`${dateVal}T${timeVal}:00Z`).toISOString();
+                        } else {
+                            // User input is in local time, convert to UTC
+                            const localDateTime = new Date(`${dateVal}T${timeVal}:00`);
+                            qsoDateTime = localDateTime.toISOString();
+                        }
+                    } else {
+                        console.error('Manual date and time fields must be filled.');
+                        return;
+                    }
+                }
+
                 const qso = {
                     Callsign: callsignInput.value,
                     Snt: sentInput.value,
@@ -222,7 +264,7 @@
                     Band: bandSelect.value,
                     Mode: modeSelect.value,
                     Propagation: propagationSelect.value,
-                    DateTime: new Date().toISOString()
+                    DateTime: qsoDateTime
                 };
 
                 try {
