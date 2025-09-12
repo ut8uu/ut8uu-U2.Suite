@@ -6,92 +6,213 @@
     <title>U2 Logger</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        :root {
+            --bg-color: #2a2a2a;
+            --container-bg-color: #333;
+            --input-bg-color: #444;
+            --text-color: #fff;
+            --highlight-color: #facc15; /* yellow-400 */
+            --border-radius: 0.5rem;
+            --spacing-sm: 0.125rem;
+            --spacing-md: 0.5rem;
+            --font-size-xs: 0.75rem;
+            --font-size-sm: 0.875rem;
+            --font-size-base: 1rem;
+            --font-size-2xl: 1.5rem;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: var(--spacing-md);
+        }
+
+        .main-container {
+            max-width: 42rem;
+            margin-left: auto;
+            margin-right: auto;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .section {
+            background-color: var(--container-bg-color);
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: var(--spacing-md);
+        }
+
+        .form-grid {
+            display: grid;
+            gap: var(--spacing-md);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: var(--spacing-sm);
+            font-size: var(--font-size-sm);
+            background-color: var(--input-bg-color);
+            color: var(--text-color);
+            border: none;
+            border-radius: var(--border-radius);
+            outline: none;
+        }
+
+        .form-input:focus {
+            outline: 2px solid var(--highlight-color);
+            outline-offset: 2px;
+        }
+        
+        .form-input-callsign {
+            font-size: var(--font-size-2xl);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: var(--spacing-sm);
+            font-size: var(--font-size-sm);
+            background-color: var(--input-bg-color);
+            color: var(--text-color);
+            border: none;
+            border-radius: var(--border-radius);
+            outline: none;
+        }
+
+        .form-select:focus {
+            outline: 2px solid var(--highlight-color);
+            outline-offset: 2px;
+        }
+
+        .form-button {
+            padding: var(--spacing-sm);
+            background-color: var(--input-bg-color);
+            color: var(--text-color);
+            font-size: var(--font-size-xs);
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s;
+            outline: none;
+        }
+
+        .form-button:hover {
+            background-color: #6b7280; /* gray-600 */
+        }
+
+        .form-button:focus {
+            outline: 2px solid var(--highlight-color);
+            outline-offset: 2px;
+        }
+
+        .form-label {
+            color: var(--highlight-color);
+            display: block;
+            font-size: var(--font-size-xs);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .form-checkbox {
+            color: var(--highlight-color);
+            background-color: var(--input-bg-color);
+            border: none;
+            border-radius: 0.125rem;
+            width: 0.75rem;
+            height: 0.75rem;
+            outline: none;
+        }
+
+        .form-checkbox:focus {
+            outline: 2px solid var(--highlight-color);
+            outline-offset: 2px;
+        }
+
+        .text-xs-force {
+            font-size: var(--font-size-xs) !important;
         }
     </style>
 </head>
-<body class="bg-[#2a2a2a] text-white p-0.5">
+<body class="p-2">
     <!-- Main Log Form View -->
-    <div id="log-form-view" class="max-w-4xl mx-auto space-y-0.5">
+    <div id="log-form-view" class="main-container">
 
         <!-- Callsign Section -->
-        <div class="p-0.5 bg-[#333] rounded-xl shadow-lg">
-            <label for="callsign" class="text-yellow-400 block text-xs mb-0.5">Callsign</label>
-            <input type="text" id="callsign" value="" class="w-full p-0.5 bg-[#444] text-white text-2xl border-none rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400">
+        <div class="section">
+            <label for="callsign" class="form-label">Callsign</label>
+            <input type="text" id="callsign" value="" class="form-input form-input-callsign">
         </div>
 
         <!-- Snt/Rcvd/Name/Comment Section -->
-        <div class="grid grid-cols-8 gap-0.5 p-0.5 bg-[#333] rounded-xl shadow-lg">
+        <div class="section form-grid grid-cols-8">
             <div class="col-span-1">
-                <label for="sent" class="text-yellow-400 block text-xs mb-0.5">Snt</label>
-                <input type="text" id="sent" value="59" class="w-full p-0.5 bg-[#444] text-white text-xs border-none rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                <label for="sent" class="form-label">Snt</label>
+                <input type="text" id="sent" value="59" class="form-input">
             </div>
             <div class="col-span-1">
-                <label for="received" class="text-yellow-400 block text-xs mb-0.5">Rcvd</label>
-                <input type="text" id="received" value="59" class="w-full p-0.5 bg-[#444] text-white text-xs border-none rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                <label for="received" class="form-label">Rcvd</label>
+                <input type="text" id="received" value="59" class="form-input">
             </div>
             <div class="col-span-3">
-                <label for="name" class="text-yellow-400 block text-xs mb-0.5">Name</label>
-                <input type="text" id="name" class="w-full p-0.5 bg-[#444] text-white text-xs border-none rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" id="name" class="form-input">
             </div>
             <div class="col-span-3">
-                <label for="comment" class="text-yellow-400 block text-xs mb-0.5">Comment</label>
-                <input type="text" id="comment" class="w-full p-0.5 bg-[#444] text-white text-xs border-none rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                <label for="comment" class="form-label">Comment</label>
+                <input type="text" id="comment" class="form-input">
             </div>
         </div>
 
         <!-- Date/Time Section -->
-        <div class="p-0.5 bg-[#333] rounded-xl shadow-lg flex items-center space-x-0.5">
-            <span class="text-yellow-400 text-xs">Date/Time</span>
+        <div class="section flex items-center space-x-0.5">
+            <span class="text-xs-force text-yellow-400">Date/Time</span>
             <div class="flex items-center space-x-0.5">
-                <input type="checkbox" id="real-time" checked class="form-checkbox text-yellow-400 rounded-sm bg-[#444] border-none focus:ring-2 focus:ring-yellow-400 w-3 h-3">
-                <label for="real-time" class="text-white text-xs">Real-time</label>
+                <input type="checkbox" id="real-time" checked class="form-checkbox">
+                <label for="real-time" class="text-xs-force text-white">Real-time</label>
             </div>
             <div class="flex items-center space-x-0.5">
-                <input type="checkbox" id="utc" checked class="form-checkbox text-yellow-400 rounded-sm bg-[#444] border-none focus:ring-2 focus:ring-yellow-400 w-3 h-3">
-                <label for="utc" class="text-white text-xs">UTC</label>
+                <input type="checkbox" id="utc" checked class="form-checkbox">
+                <label for="utc" class="text-xs-force text-white">UTC</label>
             </div>
-            <div id="date-time" class="text-white text-xs ml-auto"></div>
+            <div id="date-time" class="text-xs-force text-white ml-auto"></div>
         </div>
 
         <!-- Band/Mode/Propagation Section -->
-        <div class="grid grid-cols-3 gap-0.5 p-0.5 bg-[#333] rounded-xl shadow-lg">
+        <div class="section form-grid grid-cols-3">
             <div>
-                <label for="band" class="text-yellow-400 block text-xs mb-0.5">Band</label>
-                <select id="band" class="w-full p-0.5 text-xs bg-[#444] text-white border-none rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"></select>
+                <label for="band" class="form-label">Band</label>
+                <select id="band" class="form-select"></select>
             </div>
             <div>
-                <label for="mode" class="text-yellow-400 block text-xs mb-0.5">Mode</label>
-                <select id="mode" class="w-full p-0.5 text-xs bg-[#444] text-white border-none rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"></select>
+                <label for="mode" class="form-label">Mode</label>
+                <select id="mode" class="form-select"></select>
             </div>
             <div>
-                <label for="propagation" class="text-yellow-400 block text-xs mb-0.5">Propagation</label>
-                <select id="propagation" class="w-full p-0.5 text-xs bg-[#444] text-white border-none rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"></select>
+                <label for="propagation" class="form-label">Propagation</label>
+                <select id="propagation" class="form-select"></select>
             </div>
         </div>
 
         <!-- Function Buttons Section -->
-        <div class="grid grid-cols-6 gap-0.5 p-0.5 bg-[#333] rounded-xl shadow-lg">
-            <button id="f1Button" class="p-1 bg-[#444] text-white text-xs rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F1 Spare</button>
-            <button id="f2Button" class="p-1 bg-[#444] text-white text-xs rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F2 Spare</button>
-            <button id="f3Button" class="p-1 bg-[#444] text-white text-xs rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F3 Spare</button>
-            <button id="f4Button" class="p-1 bg-[#444] text-white text-xs rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F4 Spare</button>
-            <button id="f5Button" class="p-1 bg-[#444] text-white text-xs rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F5 Spare</button>
-            <button id="f6Button" class="p-1 bg-[#444] text-white text-xs rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F6 Spare</button>
-            <button id="f7Button" class="p-1 bg-[#444] text-white text-xs rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F7 Spare</button>
-            <button id="f8Button" class="p-1 bg-[#444] text-white text-xs rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F8 Spare</button>
-            <button id="f9Button" class="p-1 bg-[#444] text-white text-xs rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F9 Spare</button>
-            <button id="f10Button" class="p-1 bg-[#444] text-white text-xs rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F10 Spare</button>
-            <button id="f11Button" class="p-1 bg-[#444] text-white text-xs rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F11 Save</button>
-            <button id="f12Button" class="p-1 bg-[#444] text-white text-xs rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">F12 Wipe</button>
+        <div class="section form-grid grid-cols-6">
+            <button id="f1Button" class="form-button">F1 Spare</button>
+            <button id="f2Button" class="form-button">F2 Spare</button>
+            <button id="f3Button" class="form-button">F3 Spare</button>
+            <button id="f4Button" class="form-button">F4 Spare</button>
+            <button id="f5Button" class="form-button">F5 Spare</button>
+            <button id="f6Button" class="form-button">F6 Spare</button>
+            <button id="f7Button" class="form-button">F7 Spare</button>
+            <button id="f8Button" class="form-button">F8 Spare</button>
+            <button id="f9Button" class="form-button">F9 Spare</button>
+            <button id="f10Button" class="form-button">F10 Spare</button>
+            <button id="f11Button" class="form-button">F11 Save</button>
+            <button id="f12Button" class="form-button">F12 Wipe</button>
         </div>
 
         <!-- New Row of Buttons -->
-        <div class="grid grid-cols-3 gap-0.5 p-0.5 bg-[#333] rounded-xl shadow-lg">
-            <button id="listButton" class="p-1 bg-[#444] text-white text-xs rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">List</button>
-            <button id="saveButton2" class="p-1 bg-[#444] text-white text-xs rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">Save</button>
-            <button id="wipeButton" class="p-1 bg-[#444] text-white text-xs rounded-md shadow-lg transition-colors hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">Wipe</button>
+        <div class="section form-grid grid-cols-3">
+            <button id="listButton" class="form-button">List</button>
+            <button id="saveButton2" class="form-button">Save</button>
+            <button id="wipeButton" class="form-button">Wipe</button>
         </div>
     </div>
 
