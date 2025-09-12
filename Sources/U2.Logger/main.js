@@ -1,25 +1,43 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 
-function createWindow() {
+function createMainWindow() {
     const win = new BrowserWindow({
         width: 800,
         height: 510,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
-            nodeIntegration: false, // Security best practice
-            contextIsolation: true // Security best practice
+            nodeIntegration: false,
+            contextIsolation: true
         }
     });
 
-    // Load the index.html of the app.
-    win.loadFile('index.html');
-
-    // Open the DevTools.
-    // win.webContents.openDevTools();
+    win.loadFile(path.join(__dirname, 'index.html'));
 }
 
-app.whenReady().then(createWindow);
+function createListWindow() {
+    const listWin = new BrowserWindow({
+        width: 1000,
+        height: 700,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+            nodeIntegration: false,
+            contextIsolation: true
+        }
+    });
+
+    listWin.loadFile(path.join(__dirname, 'list.html'));
+    listWin.setMenu(null); // Optional: Remove the menu bar for a cleaner look
+}
+
+app.whenReady().then(() => {
+    createMainWindow();
+
+    // Listen for the 'open-list-window' message from the renderer process
+    ipcMain.on('open-list-window', () => {
+        createListWindow();
+    });
+});
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
@@ -29,6 +47,6 @@ app.on('window-all-closed', () => {
 
 app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-        createWindow();
+        createMainWindow();
     }
 });

@@ -12,7 +12,8 @@
     </style>
 </head>
 <body class="bg-[#2a2a2a] text-white p-2">
-    <div class="max-w-4xl mx-auto space-y-1">
+    <!-- Main Log Form View -->
+    <div id="log-form-view" class="max-w-4xl mx-auto space-y-1">
 
         <!-- Callsign Section -->
         <div class="p-1 bg-[#333] rounded-xl shadow-lg">
@@ -136,8 +137,7 @@
             const commentInput = document.getElementById('comment');
             const sentInput = document.getElementById('sent');
             const receivedInput = document.getElementById('received');
-
-
+            
             // Populate bands
             bands.forEach(band => {
                 const option = document.createElement('option');
@@ -241,11 +241,6 @@
                 commentInput.value = '';
             };
             
-            // Placeholder function for list
-            const listQSOs = () => {
-                console.log('List QSOs functionality not yet implemented.');
-            };
-
             // Event listeners for Save buttons and F11/Enter keypress
             const f11Button = document.getElementById('f11Button');
             const saveButton2 = document.getElementById('saveButton2');
@@ -263,9 +258,15 @@
             const wipeButton = document.getElementById('wipeButton');
             wipeButton.addEventListener('click', wipeFields);
             
-            // Event listener for List button
+            // Event listener for List button - now calls the IPC function
             const listButton = document.getElementById('listButton');
-            listButton.addEventListener('click', listQSOs);
+            listButton.addEventListener('click', () => {
+                if (window.api && window.api.openListWindow) {
+                    window.api.openListWindow();
+                } else {
+                    console.error("IPC API not available. Make sure preload.js is configured correctly.");
+                }
+            });
         });
     </script>
 </body>
