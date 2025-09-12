@@ -1,0 +1,6 @@
+@U2.Logger.Backend_HostAddress = http://localhost:5078
+
+GET {{U2.Logger.Backend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

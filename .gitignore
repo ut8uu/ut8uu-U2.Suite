@@ -53,3 +53,5 @@ CodeCoverage/
 TestResult.xml
 nunit-*.xml
 **/node_modules/**
+**/.vs/
+/Sources/U2.Logger.Backend/u2logger.db**
