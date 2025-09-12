@@ -39,10 +39,10 @@
 
         <!-- Date/Time Section -->
         <div class="section flex items-center space-x-0.5">
-            <span class="text-xs-force text-yellow-400">Date/Time</span>
+            <span class="text-xs-force text-yellow-400">Date/Time </span>
             <div class="flex items-center space-x-0.5">
                 <input type="checkbox" id="real-time" checked class="form-checkbox">
-                <label for="real-time" class="text-xs-force text-white">Real-time</label>
+                <label for="real-time" class="text-xs-force text-white">Real-time </label>
             </div>
             
             <div class="flex items-center space-x-0.5">
@@ -50,8 +50,8 @@
                 <label for="utc" class="text-xs-force text-white">UTC</label>
             </div>
 
-            <div id="real-time-controls" class="flex items-center space-x-0.5">
-                <div id="date-time" class="date-time-display"></div>
+            <div id="real-time-controls" class="flex items-center space-x-0.5 flex-grow">
+                <input type="text" id="date-time" class="form-input text-xs-force flex-grow" readonly disabled>
             </div>
 
             <div id="manual-date-time-controls" class="flex-grow flex items-center space-x-2 hidden">
@@ -189,7 +189,7 @@
                 const minutes = (utcCheckbox.checked ? now.getUTCMinutes() : now.getMinutes()).toString().padStart(2, '0');
                 const seconds = (utcCheckbox.checked ? now.getUTCSeconds() : now.getSeconds()).toString().padStart(2, '0');
                 
-                dateTimeDisplay.textContent = `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
+                dateTimeDisplay.value = `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
             }
 
             function updateManualDateTimePickers() {
