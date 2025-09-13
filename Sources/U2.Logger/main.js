@@ -1,56 +1,21 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 
-function createMainWindow() {
-    const win = new BrowserWindow({
+let mainWindow;
+
+function createWindow() {
+    mainWindow = new BrowserWindow({
         width: 600,
-        height: 360,
+        height: 400,
         webPreferences: {
-            preload: path.join(__dirname, 'preload.js'),
-            nodeIntegration: false,
-            contextIsolation: true
+            preload: path.join(__dirname, 'preload.js')
         }
     });
 
-    win.loadFile('index.html');
-    win.setMenu(null);
-
-    // Listen for the 'close' event on the main window.
-    // When the main window is closed, we will find and close any other open windows.
-    win.on('close', () => {
-        const allWindows = BrowserWindow.getAllWindows();
-        allWindows.forEach(window => {
-            // Do not close the main window itself, as it is already being closed.
-            if (window.id !== win.id) {
-                window.close();
-            }
-        });
-    });
+    mainWindow.loadFile('index.html');
 }
 
-function createListWindow() {
-    const listWin = new BrowserWindow({
-        width: 700,
-        height: 600,
-        webPreferences: {
-            preload: path.join(__dirname, 'preload.js'),
-            nodeIntegration: false,
-            contextIsolation: true
-        }
-    });
-
-    listWin.loadFile('list.html');
-    //listWin.setMenu(null); // Optional: Remove the menu bar for a cleaner look
-}
-
-app.whenReady().then(() => {
-    createMainWindow();
-
-    // Listen for the 'open-list-window' message from the renderer process
-    ipcMain.on('open-list-window', () => {
-        createListWindow();
-    });
-});
+app.whenReady().then(createWindow);
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
@@ -60,6 +25,37 @@ app.on('window-all-closed', () => {
 
 app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-        createMainWindow();
+        createWindow();
     }
+});
+
+// IPC Handler to open a new window
+ipcMain.on('open-list-window', () => {
+    const listWindow = new BrowserWindow({
+        width: 800,
+        height: 600,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js')
+        }
+    });
+    listWindow.loadFile('list.html');
+});
+
+// IPC Handler for resizing the window
+ipcMain.handle('resize-window', (event, width, height) => {
+    const webContents = event.sender;
+    const window = BrowserWindow.fromWebContents(webContents);
+    if (window) {
+        window.setSize(width, height);
+    }
+});
+
+// New IPC Handler to get the current window size
+ipcMain.handle('get-window-size', (event) => {
+    const webContents = event.sender;
+    const window = BrowserWindow.fromWebContents(webContents);
+    if (window) {
+        return window.getSize();
+    }
+    return [0, 0];
 });

@@ -93,7 +93,8 @@
         </div>
 
         <!-- New Row of Buttons -->
-        <div class="section form-grid grid-cols-3">
+        <div class="section form-grid grid-cols-4">
+            <button id="lastQsoButton" class="form-button">Last QSO</button>
             <button id="listButton" class="form-button">List</button>
             <button id="saveButton2" class="form-button">Save</button>
             <button id="wipeButton" class="form-button">Wipe</button>
@@ -346,6 +347,7 @@
             // Event listeners for Save buttons and F11/Enter keypress
             const f11Button = document.getElementById('f11Button');
             const saveButton2 = document.getElementById('saveButton2');
+            const lastQsoButton = document.getElementById('lastQsoButton');
             f11Button.addEventListener('click', saveQSO);
             saveButton2.addEventListener('click', saveQSO);
 
@@ -367,6 +369,24 @@
                     window.api.openListWindow();
                 } else {
                     console.error("IPC API not available. Make sure preload.js is configured correctly.");
+                }
+            });
+
+            // New logic for toggling the window size
+            let isTall = false;
+            lastQsoButton.addEventListener('click', async () => {
+                if (window.api && window.api.resizeWindow && window.api.getWindowSize) {
+                    const [currentWidth, currentHeight] = await window.api.getWindowSize();
+                    let newHeight;
+                    if (!isTall) {
+                        newHeight = currentHeight + 400;
+                    } else {
+                        newHeight = currentHeight - 400;
+                    }
+                    window.api.resizeWindow(currentWidth, newHeight);
+                    isTall = !isTall; // Toggle the state
+                } else {
+                    console.error("IPC API for resize or get size not available.");
                 }
             });
         });
