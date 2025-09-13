@@ -324,6 +324,7 @@
                         nameInput.value = '';
                         commentInput.value = '';
                         updateSignalReports(); // Set default values based on current mode
+                        callsignInput.focus(); // Set focus to callsign input
 
                     } else {
                         console.error('Failed to save QSO:', response.statusText);
