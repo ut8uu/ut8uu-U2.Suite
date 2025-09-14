@@ -224,7 +224,11 @@ function initializeApp() {
                 commentInput.value = '';
                 updateSignalReports(); // Set default values based on current mode
                 callsignInput.focus(); // Set focus to callsign input
-
+                
+                // Refresh the QSO table if it's currently visible
+                if (isTall) {
+                    fetchAndDisplayLastQSOs();
+                }
             } else {
                 console.error('Failed to save QSO:', response.statusText);
             }
@@ -273,7 +277,7 @@ function initializeApp() {
     // New logic for toggling the window size and showing/hiding the QSO table
     let isTall = false;
 
-    const fetchAndDisplayQSOs = async () => {
+    const fetchAndDisplayLastQSOs = async () => {
         try {
             // Fetch the first page of 25 QSOs, sorted by date descending
             const response = await fetch('https://localhost:7154/api/v1/QSOs?pageNumber=1&pageSize=25&sortKey=dateTime&sortDirection=desc');
@@ -312,7 +316,7 @@ function initializeApp() {
             let newHeight;
             if (!isTall) {
                 newHeight = currentHeight + sizeDelta;
-                await fetchAndDisplayQSOs(); // Fetch and display table when expanding
+                await fetchAndDisplayLastQSOs(); // Fetch and display table when expanding
                 qsoTableContainer.classList.remove('hidden');
             } else {
                 newHeight = currentHeight - sizeDelta;
