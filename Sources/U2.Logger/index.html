@@ -101,6 +101,24 @@
         </div>
     </div>
 
+    <!-- Container for the QSO table, initially hidden -->
+    <div id="qso-table-container" class="mt-4 hidden p-2 bg-slate-700 rounded-lg">
+        <h2 class="text-white text-lg font-bold mb-2">Last 25 QSOs</h2>
+        <table class="min-w-full divide-y divide-gray-600">
+            <thead class="bg-slate-800">
+                <tr>
+                    <th scope="col" class="px-3 py-1 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Callsign</th>
+                    <th scope="col" class="px-3 py-1 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Date/Time</th>
+                    <th scope="col" class="px-3 py-1 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Band</th>
+                    <th scope="col" class="px-3 py-1 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Mode</th>
+                </tr>
+            </thead>
+            <tbody id="qso-table-body" class="bg-slate-700 divide-y divide-gray-600 text-sm">
+                <!-- QSO data will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const bands = [
@@ -149,6 +167,8 @@
             const manualDateTimeControls = document.getElementById('manual-date-time-controls');
             const datePicker = document.getElementById('date-picker');
             const timePicker = document.getElementById('time-picker');
+            const qsoTableContainer = document.getElementById('qso-table-container');
+            const qsoTableBody = document.getElementById('qso-table-body');
             
             // Populate bands
             bands.forEach(band => {
@@ -372,16 +392,52 @@
                 }
             });
 
-            // New logic for toggling the window size
+            // New logic for toggling the window size and showing/hiding the QSO table
             let isTall = false;
+
+            const fetchAndDisplayQSOs = async () => {
+                try {
+                    // Fetch the first page of 25 QSOs, sorted by date descending
+                    const response = await fetch('https://localhost:7154/api/v1/QSOs?pageNumber=1&pageSize=25&sortKey=dateTime&sortDirection=desc');
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const latestQSOs = await response.json();
+
+                    // Clear the existing table body
+                    qsoTableBody.innerHTML = '';
+
+                    // Populate the table with the QSOs
+                    latestQSOs.forEach(qso => {
+                        const row = document.createElement('tr');
+                        const qsoDateTime = new Date(qso.DateTime);
+                        const dateString = qsoDateTime.toLocaleDateString();
+                        const timeString = qsoDateTime.toLocaleTimeString();
+
+                        row.innerHTML = `
+                            <td class="px-3 py-1 whitespace-nowrap text-white">${qso.Callsign}</td>
+                            <td class="px-3 py-1 whitespace-nowrap text-white">${dateString} ${timeString}</td>
+                            <td class="px-3 py-1 whitespace-nowrap text-white">${qso.Band}</td>
+                            <td class="px-3 py-1 whitespace-nowrap text-white">${qso.Mode}</td>
+                        `;
+                        qsoTableBody.appendChild(row);
+                    });
+                } catch (error) {
+                    console.error('Error fetching QSOs:', error);
+                }
+            };
+
             lastQsoButton.addEventListener('click', async () => {
                 if (window.api && window.api.resizeWindow && window.api.getWindowSize) {
                     const [currentWidth, currentHeight] = await window.api.getWindowSize();
                     let newHeight;
                     if (!isTall) {
                         newHeight = currentHeight + 400;
+                        await fetchAndDisplayQSOs(); // Fetch and display table when expanding
+                        qsoTableContainer.classList.remove('hidden');
                     } else {
                         newHeight = currentHeight - 400;
+                        qsoTableContainer.classList.add('hidden'); // Hide table when shrinking
                     }
                     window.api.resizeWindow(currentWidth, newHeight);
                     isTall = !isTall; // Toggle the state
