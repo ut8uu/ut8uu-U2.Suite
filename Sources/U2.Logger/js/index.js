@@ -171,6 +171,17 @@ function initializeApp() {
         }
         event.target.value = filteredValue;
     });
+
+    // New filtering functionality
+    callsignInput.addEventListener('input', () => {
+        const callsign = callsignInput.value.toUpperCase();
+        if (callsign.length >= 2 && isTall) {
+            fetchAndDisplayQSOs(callsign);
+        } else if (callsign.length === 0 && isTall) {
+            // If the user clears the input, refresh to show the full list
+            fetchAndDisplayQSOs();
+        }
+    });
     
     // Function to save the QSO
     const saveQSO = async () => {
@@ -227,8 +238,9 @@ function initializeApp() {
                 
                 // Refresh the QSO table if it's currently visible
                 if (isTall) {
-                    fetchAndDisplayLastQSOs();
+                    fetchAndDisplayQSOs();
                 }
+
             } else {
                 console.error('Failed to save QSO:', response.statusText);
             }
@@ -277,10 +289,20 @@ function initializeApp() {
     // New logic for toggling the window size and showing/hiding the QSO table
     let isTall = false;
 
-    const fetchAndDisplayLastQSOs = async () => {
+    const fetchAndDisplayQSOs = async (callsignFilter = '') => {
         try {
-            // Fetch the first page of 25 QSOs, sorted by date descending
-            const response = await fetch('https://localhost:7154/api/v1/QSOs?pageNumber=1&pageSize=25&sortKey=dateTime&sortDirection=desc');
+            const params = new URLSearchParams({
+                pageNumber: '1',
+                pageSize: '25',
+                sortKey: 'dateTime',
+                sortDirection: 'desc'
+            });
+
+            if (callsignFilter) {
+                params.append('callsignContains', callsignFilter);
+            }
+
+            const response = await fetch(`https://localhost:7154/api/v1/QSOs?${params.toString()}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -316,7 +338,7 @@ function initializeApp() {
             let newHeight;
             if (!isTall) {
                 newHeight = currentHeight + sizeDelta;
-                await fetchAndDisplayLastQSOs(); // Fetch and display table when expanding
+                await fetchAndDisplayQSOs(); // Fetch and display table when expanding
                 qsoTableContainer.classList.remove('hidden');
             } else {
                 newHeight = currentHeight - sizeDelta;

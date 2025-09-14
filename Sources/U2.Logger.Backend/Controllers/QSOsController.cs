@@ -23,9 +23,16 @@ namespace U2.Logger.Backend.Controllers
             [FromQuery] int pageNumber = 1,
             [FromQuery] int pageSize = 50,
             [FromQuery] string sortKey = "dateTime",
-            [FromQuery] string sortDirection = "desc")
+            [FromQuery] string sortDirection = "desc",
+            [FromQuery] string callsignContains = null)
         {
             var query = _context.QSOs.AsQueryable();
+
+            // Apply filter if a callsign fragment is provided
+            if (!string.IsNullOrWhiteSpace(callsignContains))
+            {
+                query = query.Where(q => q.Callsign.ToLower().Contains(callsignContains.ToLower()));
+            }
 
             // Get the total number of records before pagination
             var totalCount = await query.CountAsync();
