@@ -105,25 +105,25 @@
     <!-- Container for the QSO table, initially hidden -->
     <div id="qso-table-container" class="mt-4 hidden p-2 bg-slate-700 rounded-lg">
         <h2 class="text-white text-lg font-bold mb-2">Last 25 QSOs</h2>
-        <table class="min-w-full divide-y divide-gray-600">
-            <thead class="bg-slate-800">
-                <tr>
-                    <th scope="col" class="px-3 py-1 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Callsign</th>
-                    <th scope="col" class="px-3 py-1 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Date/Time</th>
-                    <th scope="col" class="px-3 py-1 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Band</th>
-                    <th scope="col" class="px-3 py-1 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Mode</th>
-                </tr>
-            </thead>
-            <tbody id="qso-table-body" class="bg-slate-700 divide-y divide-gray-600 text-sm">
-                <!-- QSO data will be inserted here -->
-            </tbody>
-        </table>
+        <div class="qso-table-scroller">
+            <table class="min-w-full divide-y divide-gray-600">
+                <thead class="bg-slate-800">
+                    <tr>
+                        <th scope="col" class="px-3 py-1 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Callsign</th>
+                        <th scope="col" class="px-3 py-1 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Date/Time</th>
+                        <th scope="col" class="px-3 py-1 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Band</th>
+                        <th scope="col" class="px-3 py-1 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Mode</th>
+                    </tr>
+                </thead>
+                <tbody id="qso-table-body" class="bg-slate-700 divide-y divide-gray-600 text-sm">
+                    <!-- QSO data will be inserted here -->
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <script>
-        (function() {
-            document.addEventListener('DOMContentLoaded', initializeApp);
-        })();
+        document.addEventListener('DOMContentLoaded', initializeApp);
     </script>
 </body>
 </html>

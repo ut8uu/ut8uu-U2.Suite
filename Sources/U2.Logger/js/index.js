@@ -308,13 +308,14 @@ function initializeApp() {
     lastQsoButton.addEventListener('click', async () => {
         if (window.api && window.api.resizeWindow && window.api.getWindowSize) {
             const [currentWidth, currentHeight] = await window.api.getWindowSize();
+            let sizeDelta = 300;
             let newHeight;
             if (!isTall) {
-                newHeight = currentHeight + 400;
+                newHeight = currentHeight + sizeDelta;
                 await fetchAndDisplayQSOs(); // Fetch and display table when expanding
                 qsoTableContainer.classList.remove('hidden');
             } else {
-                newHeight = currentHeight - 400;
+                newHeight = currentHeight - sizeDelta;
                 qsoTableContainer.classList.add('hidden'); // Hide table when shrinking
             }
             window.api.resizeWindow(currentWidth, newHeight);

@@ -128,3 +128,8 @@ body {
     color: var(--text-color);
     margin-left: auto;
 }
+
+.qso-table-scroller {
+    max-height: 230px;
+    overflow-y: auto;
+}
