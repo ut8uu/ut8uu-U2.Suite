@@ -23,22 +23,23 @@ public sealed class QsoControllerTests
     [TestInitialize]
     public void Initialize()
     {
+        // Use a unique database name for each test run to ensure complete isolation.
+        var databaseName = Guid.NewGuid().ToString();
+
         var options = new DbContextOptionsBuilder<LoggerContext>()
-            .UseInMemoryDatabase(databaseName: "TestDb")
+            .UseInMemoryDatabase(databaseName: databaseName)
             .Options;
         _context = new LoggerContext(options);
-
         _context.Database.EnsureDeleted();
 
         _controller = new QSOsController(_context)
         {
             ControllerContext = new ControllerContext()
             {
-                HttpContext = new DefaultHttpContext()
+                HttpContext = new DefaultHttpContext(),
             }
         };
 
-        // Populate the database with sample data, converting DateTime to a string
         _context.QSOs.Add(new QSO
         {
             Id = 1,
@@ -79,6 +80,7 @@ public sealed class QsoControllerTests
     [DataRow(1, 2, "band", "asc", null, 2, "W1AW", DisplayName = "Sort by band (ascending)")]
     [DataRow(1, 2, "band", "desc", null, 2, "K9AT", DisplayName = "Sort by band (descending)")]
     [DataRow(1, 2, "datetime", "asc", null, 2, "W1AW", DisplayName = "Paginate and sort by datetime (ascending)")]
+    [DataRow(1, 2, "datetime", "desc", null, 2, "K9AT", DisplayName = "Paginate and sort by datetime (descending)")]
     public async Task GetQSOs_WithSortingFilteringAndPagination_ReturnsCorrectData(
         int pageNumber,
         int pageSize,
@@ -101,6 +103,6 @@ public sealed class QsoControllerTests
 
         // Verify that the X-Total-Count header was added and has the correct value.
         Assert.IsTrue(_controller.Response.Headers.ContainsKey("X-Total-Count"));
-        Assert.AreEqual(2.ToString(), _controller.Response.Headers["X-Total-Count"].ToString());
+        Assert.AreEqual(expectedCount.ToString(), _controller.Response.Headers["X-Total-Count"].ToString());
     }
 }
