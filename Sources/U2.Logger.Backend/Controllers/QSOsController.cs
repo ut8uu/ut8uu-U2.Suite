@@ -1,138 +1,184 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
 using U2.Logger.Backend.Data;
 using U2.Logger.Backend.Models;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
-namespace U2.Logger.Backend.Controllers
+namespace U2.Logger.Backend.Controllers;
+
+[Route("api/v1/[controller]")]
+[ApiController]
+public class QSOsController : ControllerBase
 {
-    [Route("api/v1/[controller]")]
-    [ApiController]
-    public class QSOsController : ControllerBase
+    private readonly LoggerContext _context;
+
+    public QSOsController(LoggerContext context)
     {
-        private readonly LoggerContext _context;
+        _context = context;
+    }
 
-        public QSOsController(LoggerContext context)
+    /// <summary>
+    /// Retrieves a paginated and sortable list of QSOs.
+    /// </summary>
+    /// <param name="pageNumber">The page number to retrieve.</param>
+    /// <param name="pageSize">The number of items per page.</param>
+    /// <param name="sortKey">The field to sort by.</param>
+    /// <param name="sortDirection">The sort direction (asc or desc).</param>
+    /// <param name="callsignContains">Optional filter to search for callsigns containing a specific string.</param>
+    /// <returns>A list of QSOs.</returns>
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<QSO>>> GetQSOs(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 50,
+        [FromQuery] string sortKey = "DateTime",
+        [FromQuery] string sortDirection = "desc",
+        [FromQuery] string? callsignContains = null)
+    {
+        IQueryable<QSO> query = _context.QSOs;
+
+        if (!string.IsNullOrEmpty(callsignContains))
         {
-            _context = context;
+            query = query.Where(q => q.Callsign.ToLower().Contains(callsignContains.ToLower()));
         }
 
-        // GET: api/v1/QSOs
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<QSO>>> GetQSOs(
-            [FromQuery] int pageNumber = 1,
-            [FromQuery] int pageSize = 50,
-            [FromQuery] string sortKey = "dateTime",
-            [FromQuery] string sortDirection = "desc",
-            [FromQuery] string callsignContains = null)
+        // Apply sorting dynamically based on the sortKey and sortDirection
+        switch (sortKey.ToLower())
         {
-            var query = _context.QSOs.AsQueryable();
-
-            // Apply filter if a callsign fragment is provided
-            if (!string.IsNullOrWhiteSpace(callsignContains))
-            {
-                query = query.Where(q => q.Callsign.ToLower().Contains(callsignContains.ToLower()));
-            }
-
-            // Get the total number of records before pagination
-            var totalCount = await query.CountAsync();
-
-            // Apply sorting
-            switch (sortKey.ToLower())
-            {
-                case "callsign":
-                    query = (sortDirection.ToLower() == "asc") ? query.OrderBy(q => q.Callsign) : query.OrderByDescending(q => q.Callsign);
-                    break;
-                case "band":
-                    query = (sortDirection.ToLower() == "asc") ? query.OrderBy(q => q.Band) : query.OrderByDescending(q => q.Band);
-                    break;
-                case "mode":
-                    query = (sortDirection.ToLower() == "asc") ? query.OrderBy(q => q.Mode) : query.OrderByDescending(q => q.Mode);
-                    break;
-                case "datetime":
-                default:
-                    query = (sortDirection.ToLower() == "asc") ? query.OrderBy(q => q.DateTime) : query.OrderByDescending(q => q.DateTime);
-                    break;
-            }
-
-            // Apply pagination
-            var qsos = await query
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-
-            // Add the total count to the response headers for the frontend to use
-            Response.Headers.Add("X-Total-Count", totalCount.ToString());
-
-            return Ok(qsos);
+            case "datetime":
+                query = sortDirection.ToLower() == "desc" ? query.OrderByDescending(q => q.DateTime) : query.OrderBy(q => q.DateTime);
+                break;
+            case "callsign":
+                query = sortDirection.ToLower() == "desc" ? query.OrderByDescending(q => q.Callsign) : query.OrderBy(q => q.Callsign);
+                break;
+            case "band":
+                query = sortDirection.ToLower() == "desc" ? query.OrderByDescending(q => q.Band) : query.OrderBy(q => q.Band);
+                break;
+            // Add more cases for other sortable properties as needed
+            default:
+                // Default to sorting by DateTime
+                query = sortDirection.ToLower() == "desc" ? query.OrderByDescending(q => q.DateTime) : query.OrderBy(q => q.DateTime);
+                break;
         }
 
-        // GET: api/v1/QSOs/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<QSO>> GetQSO(int id)
+        var totalCount = await query.CountAsync();
+        Response.Headers.Append("X-Total-Count", totalCount.ToString());
+
+        var qsos = await query
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return Ok(qsos);
+    }
+
+    /// <summary>
+    /// Retrieves a single QSO by its ID.
+    /// </summary>
+    /// <param name="id">The ID of the QSO.</param>
+    /// <returns>The QSO with the specified ID.</returns>
+    [HttpGet("{id}")]
+    public async Task<ActionResult<QSO>> GetQSO(int id)
+    {
+        if (_context.QSOs == null)
         {
-            var qso = await _context.QSOs.FindAsync(id);
-            if (qso == null)
+            return NotFound();
+        }
+
+        var qso = await _context.QSOs.FindAsync(id);
+
+        if (qso == null)
+        {
+            return NotFound();
+        }
+
+        return qso;
+    }
+
+    /// <summary>
+    /// Updates a specific QSO.
+    /// </summary>
+    /// <param name="id">The ID of the QSO to update.</param>
+    /// <param name="qso">The updated QSO object.</param>
+    /// <returns>A NoContent response if successful, or NotFound if the QSO does not exist.</returns>
+    [HttpPut("{id}")]
+    public async Task<IActionResult> PutQSO(int id, QSO qso)
+    {
+        if (id != qso.Id)
+        {
+            return BadRequest();
+        }
+
+        _context.Entry(qso).State = EntityState.Modified;
+
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!QSOExists(id))
             {
                 return NotFound();
             }
-            return qso;
+            else
+            {
+                throw;
+            }
         }
 
-        // POST: api/v1/QSOs
-        [HttpPost]
-        public async Task<ActionResult<QSO>> PostQSO(QSO qso)
+        return NoContent();
+    }
+
+    /// <summary>
+    /// Creates a new QSO.
+    /// </summary>
+    /// <param name="qso">The QSO object to be created.</param>
+    /// <returns>The newly created QSO object.</returns>
+    [HttpPost]
+    public async Task<ActionResult<QSO>> PostQSO([FromBody] QSO qso)
+    {
+        if (_context.QSOs == null)
         {
-            _context.QSOs.Add(qso);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetQSOs", new { id = qso.Id }, qso);
+            return Problem("Entity set 'LoggerContext.QSOs' is null.");
         }
 
-        // PUT: api/v1/QSOs/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutQSO(int id, QSO qso)
+        _context.QSOs.Add(qso);
+        await _context.SaveChangesAsync();
+
+        return CreatedAtAction("GetQSO", new { id = qso.Id }, qso);
+    }
+
+    /// <summary>
+    /// Deletes a specific QSO.
+    /// </summary>
+    /// <param name="id">The ID of the QSO to delete.</param>
+    /// <returns>A NoContent response if successful, or NotFound if the QSO does not exist.</returns>
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteQSO(int id)
+    {
+        if (_context.QSOs == null)
         {
-            if (id != qso.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(qso).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_context.QSOs.Any(e => e.Id == id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return NotFound();
         }
 
-        // DELETE: api/v1/QSOs/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteQSO(int id)
+        var qso = await _context.QSOs.FindAsync(id);
+        if (qso == null)
         {
-            var qso = await _context.QSOs.FindAsync(id);
-            if (qso == null)
-            {
-                return NotFound();
-            }
-
-            _context.QSOs.Remove(qso);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return NotFound();
         }
+
+        _context.QSOs.Remove(qso);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    private bool QSOExists(int id)
+    {
+        return (_context.QSOs?.Any(e => e.Id == id)).GetValueOrDefault();
     }
 }
