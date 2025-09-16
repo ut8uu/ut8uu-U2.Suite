@@ -288,4 +288,45 @@ public sealed class QsoControllerTests
         // Assert
         Assert.IsInstanceOfType(result, typeof(BadRequestResult));
     }
+
+    [TestMethod]
+    public async Task DeleteQSO_RemovesQsoCorrectly()
+    {
+        // Arrange
+        // Fetch the ID of a QSO from the database instead of using a hardcoded value.
+        var qsoIdToDelete = (await _context.QSOs.FirstAsync()).Id;
+
+        // Act
+        var result = await _controller.DeleteQSO(qsoIdToDelete);
+
+        // Assert
+        // Verify that the result is a NoContentResult
+        Assert.IsInstanceOfType(result, typeof(NoContentResult));
+
+        // Verify that the QSO is no longer in the database
+        var deletedQso = await _context.QSOs.FindAsync(qsoIdToDelete);
+        Assert.IsNull(deletedQso);
+
+        // Verify that the total count of QSOs has decreased
+        var remainingQSOs = await _context.QSOs.CountAsync();
+        Assert.AreEqual(1, remainingQSOs);
+    }
+
+    [TestMethod]
+    public async Task DeleteQSO_WithNonExistentId_ReturnsNotFound()
+    {
+        // Arrange
+        var nonExistentId = 99;
+
+        // Assert that the QSO does not exist to begin with.
+        var qso = await _context.QSOs.FindAsync(nonExistentId);
+        Assert.IsNull(qso);
+
+        // Act
+        var result = await _controller.DeleteQSO(nonExistentId);
+
+        // Assert
+        // The API should return a NotFoundResult because the QSO does not exist.
+        Assert.IsInstanceOfType(result, typeof(NotFoundResult));
+    }
 }
