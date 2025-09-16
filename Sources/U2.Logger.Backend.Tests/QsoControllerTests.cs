@@ -105,4 +105,103 @@ public sealed class QsoControllerTests
         Assert.IsTrue(_controller.Response.Headers.ContainsKey("X-Total-Count"));
         Assert.AreEqual(expectedCount.ToString(), _controller.Response.Headers["X-Total-Count"].ToString());
     }
+
+    [TestMethod]
+    public async Task PostQSO_WithValidData_ReturnsCreatedResponseAndStoresCorrectly()
+    {
+        // Arrange
+        var newQso = new QSO
+        {
+            Band = "17M",
+            BandRx = "17M",
+            Callsign = "N2CKH",
+            Comment = "This is a test comment.",
+            Continent = "NA",
+            Country = "United States",
+            CqZone = "5",
+            Distance = 1200,
+            Dxcc = "291",
+            Email = "n2ckh@qrz.com",
+            Freq = 18.123,
+            FreqRx = 18.123,
+            Gridsquare = "FN31",
+            ItuZone = "8",
+            Lat = "40.7128",
+            Lon = "-74.0060",
+            Mode = "FT8",
+            MyCity = "New York",
+            MyCountry = "United States",
+            MyCqZone = "5",
+            MyGridsquare = "FN31",
+            MyItuZone = "8",
+            MyLat = "40.7128",
+            MyLon = "-74.0060",
+            MyName = "John Doe",
+            Name = "Jane Doe",
+            Operator = "N2CKH",
+            QslRcvd = "Y",
+            QslSent = "Y",
+            QslVia = "LOTW",
+            DateTime = DateTime.UtcNow.ToString("o"),
+            DateTimeOff = null,
+            Qth = "New York, NY",
+            RstRcvd = "599",
+            RstSent = "599",
+            StationCallsign = "W2XYZ"
+        };
+
+        // Act
+        var result = await _controller.PostQSO(newQso);
+
+        // Assert that the result is a CreatedAtActionResult.
+        var createdResult = result.Result as CreatedAtActionResult;
+        Assert.IsNotNull(createdResult);
+
+        // Verify that the returned object is a QSO and has a valid ID.
+        var returnedQso = createdResult.Value as QSO;
+        Assert.IsNotNull(returnedQso);
+        Assert.AreNotEqual(0, returnedQso.Id);
+
+        // Now, retrieve the QSO from the database using the new ID.
+        var storedQso = await _context.QSOs.FindAsync(returnedQso.Id);
+        Assert.IsNotNull(storedQso, "The QSO was not found in the database.");
+
+        // Assert that all fields were correctly stored.
+        Assert.AreEqual(newQso.Band, storedQso.Band);
+        Assert.AreEqual(newQso.BandRx, storedQso.BandRx);
+        Assert.AreEqual(newQso.Callsign, storedQso.Callsign);
+        Assert.AreEqual(newQso.Comment, storedQso.Comment);
+        Assert.AreEqual(newQso.Continent, storedQso.Continent);
+        Assert.AreEqual(newQso.Country, storedQso.Country);
+        Assert.AreEqual(newQso.CqZone, storedQso.CqZone);
+        Assert.AreEqual(newQso.Distance, storedQso.Distance);
+        Assert.AreEqual(newQso.Dxcc, storedQso.Dxcc);
+        Assert.AreEqual(newQso.Email, storedQso.Email);
+        Assert.AreEqual(newQso.Freq, storedQso.Freq);
+        Assert.AreEqual(newQso.FreqRx, storedQso.FreqRx);
+        Assert.AreEqual(newQso.Gridsquare, storedQso.Gridsquare);
+        Assert.AreEqual(newQso.ItuZone, storedQso.ItuZone);
+        Assert.AreEqual(newQso.Lat, storedQso.Lat);
+        Assert.AreEqual(newQso.Lon, storedQso.Lon);
+        Assert.AreEqual(newQso.Mode, storedQso.Mode);
+        Assert.AreEqual(newQso.MyCity, storedQso.MyCity);
+        Assert.AreEqual(newQso.MyCountry, storedQso.MyCountry);
+        Assert.AreEqual(newQso.MyCqZone, storedQso.MyCqZone);
+        Assert.AreEqual(newQso.MyGridsquare, storedQso.MyGridsquare);
+        Assert.AreEqual(newQso.MyItuZone, storedQso.MyItuZone);
+        Assert.AreEqual(newQso.MyLat, storedQso.MyLat);
+        Assert.AreEqual(newQso.MyLon, storedQso.MyLon);
+        Assert.AreEqual(newQso.MyName, storedQso.MyName);
+        Assert.AreEqual(newQso.Name, storedQso.Name);
+        Assert.AreEqual(newQso.Operator, storedQso.Operator);
+        Assert.AreEqual(newQso.QslRcvd, storedQso.QslRcvd);
+        Assert.AreEqual(newQso.QslSent, storedQso.QslSent);
+        Assert.AreEqual(newQso.QslVia, storedQso.QslVia);
+        Assert.AreEqual(newQso.DateTime, storedQso.DateTime);
+        Assert.AreEqual(newQso.DateTimeOff, storedQso.DateTimeOff);
+        Assert.AreEqual(newQso.Qth, storedQso.Qth);
+        Assert.AreEqual(newQso.RstRcvd, storedQso.RstRcvd);
+        Assert.AreEqual(newQso.RstSent, storedQso.RstSent);
+        Assert.AreEqual(newQso.StationCallsign, storedQso.StationCallsign);
+    }
 }
