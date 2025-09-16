@@ -20,6 +20,89 @@ public sealed class QsoControllerTests
     private LoggerContext _context;
     private QSOsController _controller;
 
+    private QSO CreateTestQSO()
+    {
+        return new QSO
+        {
+            Band = "17M",
+            BandRx = "17M",
+            Callsign = "N2CKH",
+            Comment = "This is a test comment.",
+            Continent = "NA",
+            Country = "United States",
+            CqZone = "5",
+            Distance = 1200,
+            Dxcc = "291",
+            Email = "n2ckh@qrz.com",
+            Freq = 18.123,
+            FreqRx = 18.123,
+            Gridsquare = "FN31",
+            ItuZone = "8",
+            Lat = "40.7128",
+            Lon = "-74.0060",
+            Mode = "FT8",
+            MyCity = "New York",
+            MyCountry = "United States",
+            MyCqZone = "5",
+            MyGridsquare = "FN31",
+            MyItuZone = "8",
+            MyLat = "40.7128",
+            MyLon = "-74.0060",
+            MyName = "John Doe",
+            Name = "Jane Doe",
+            Operator = "N2CKH",
+            QslRcvd = "Y",
+            QslSent = "Y",
+            QslVia = "LOTW",
+            DateTime = DateTime.UtcNow.ToString("o"),
+            DateTimeOff = null,
+            Qth = "New York, NY",
+            RstRcvd = "599",
+            RstSent = "599",
+            StationCallsign = "W2XYZ"
+        };
+    }
+
+    private void CompareQSO(QSO qso1, QSO qso2)
+    {
+        Assert.AreEqual(qso1.Band, qso2.Band);
+        Assert.AreEqual(qso1.BandRx, qso2.BandRx);
+        Assert.AreEqual(qso1.Callsign, qso2.Callsign);
+        Assert.AreEqual(qso1.Comment, qso2.Comment);
+        Assert.AreEqual(qso1.Continent, qso2.Continent);
+        Assert.AreEqual(qso1.Country, qso2.Country);
+        Assert.AreEqual(qso1.CqZone, qso2.CqZone);
+        Assert.AreEqual(qso1.Distance, qso2.Distance);
+        Assert.AreEqual(qso1.Dxcc, qso2.Dxcc);
+        Assert.AreEqual(qso1.Email, qso2.Email);
+        Assert.AreEqual(qso1.Freq, qso2.Freq);
+        Assert.AreEqual(qso1.FreqRx, qso2.FreqRx);
+        Assert.AreEqual(qso1.Gridsquare, qso2.Gridsquare);
+        Assert.AreEqual(qso1.ItuZone, qso2.ItuZone);
+        Assert.AreEqual(qso1.Lat, qso2.Lat);
+        Assert.AreEqual(qso1.Lon, qso2.Lon);
+        Assert.AreEqual(qso1.Mode, qso2.Mode);
+        Assert.AreEqual(qso1.MyCity, qso2.MyCity);
+        Assert.AreEqual(qso1.MyCountry, qso2.MyCountry);
+        Assert.AreEqual(qso1.MyCqZone, qso2.MyCqZone);
+        Assert.AreEqual(qso1.MyGridsquare, qso2.MyGridsquare);
+        Assert.AreEqual(qso1.MyItuZone, qso2.MyItuZone);
+        Assert.AreEqual(qso1.MyLat, qso2.MyLat);
+        Assert.AreEqual(qso1.MyLon, qso2.MyLon);
+        Assert.AreEqual(qso1.MyName, qso2.MyName);
+        Assert.AreEqual(qso1.Name, qso2.Name);
+        Assert.AreEqual(qso1.Operator, qso2.Operator);
+        Assert.AreEqual(qso1.QslRcvd, qso2.QslRcvd);
+        Assert.AreEqual(qso1.QslSent, qso2.QslSent);
+        Assert.AreEqual(qso1.QslVia, qso2.QslVia);
+        Assert.AreEqual(qso1.DateTime, qso2.DateTime);
+        Assert.AreEqual(qso1.DateTimeOff, qso2.DateTimeOff);
+        Assert.AreEqual(qso1.Qth, qso2.Qth);
+        Assert.AreEqual(qso1.RstRcvd, qso2.RstRcvd);
+        Assert.AreEqual(qso1.RstSent, qso2.RstSent);
+        Assert.AreEqual(qso1.StationCallsign, qso2.StationCallsign);
+    }
+
     [TestInitialize]
     public void Initialize()
     {
@@ -110,45 +193,7 @@ public sealed class QsoControllerTests
     public async Task PostQSO_WithValidData_ReturnsCreatedResponseAndStoresCorrectly()
     {
         // Arrange
-        var newQso = new QSO
-        {
-            Band = "17M",
-            BandRx = "17M",
-            Callsign = "N2CKH",
-            Comment = "This is a test comment.",
-            Continent = "NA",
-            Country = "United States",
-            CqZone = "5",
-            Distance = 1200,
-            Dxcc = "291",
-            Email = "n2ckh@qrz.com",
-            Freq = 18.123,
-            FreqRx = 18.123,
-            Gridsquare = "FN31",
-            ItuZone = "8",
-            Lat = "40.7128",
-            Lon = "-74.0060",
-            Mode = "FT8",
-            MyCity = "New York",
-            MyCountry = "United States",
-            MyCqZone = "5",
-            MyGridsquare = "FN31",
-            MyItuZone = "8",
-            MyLat = "40.7128",
-            MyLon = "-74.0060",
-            MyName = "John Doe",
-            Name = "Jane Doe",
-            Operator = "N2CKH",
-            QslRcvd = "Y",
-            QslSent = "Y",
-            QslVia = "LOTW",
-            DateTime = DateTime.UtcNow.ToString("o"),
-            DateTimeOff = null,
-            Qth = "New York, NY",
-            RstRcvd = "599",
-            RstSent = "599",
-            StationCallsign = "W2XYZ"
-        };
+        var newQso = CreateTestQSO();
 
         // Act
         var result = await _controller.PostQSO(newQso);
@@ -166,42 +211,36 @@ public sealed class QsoControllerTests
         var storedQso = await _context.QSOs.FindAsync(returnedQso.Id);
         Assert.IsNotNull(storedQso, "The QSO was not found in the database.");
 
-        // Assert that all fields were correctly stored.
-        Assert.AreEqual(newQso.Band, storedQso.Band);
-        Assert.AreEqual(newQso.BandRx, storedQso.BandRx);
-        Assert.AreEqual(newQso.Callsign, storedQso.Callsign);
-        Assert.AreEqual(newQso.Comment, storedQso.Comment);
-        Assert.AreEqual(newQso.Continent, storedQso.Continent);
-        Assert.AreEqual(newQso.Country, storedQso.Country);
-        Assert.AreEqual(newQso.CqZone, storedQso.CqZone);
-        Assert.AreEqual(newQso.Distance, storedQso.Distance);
-        Assert.AreEqual(newQso.Dxcc, storedQso.Dxcc);
-        Assert.AreEqual(newQso.Email, storedQso.Email);
-        Assert.AreEqual(newQso.Freq, storedQso.Freq);
-        Assert.AreEqual(newQso.FreqRx, storedQso.FreqRx);
-        Assert.AreEqual(newQso.Gridsquare, storedQso.Gridsquare);
-        Assert.AreEqual(newQso.ItuZone, storedQso.ItuZone);
-        Assert.AreEqual(newQso.Lat, storedQso.Lat);
-        Assert.AreEqual(newQso.Lon, storedQso.Lon);
-        Assert.AreEqual(newQso.Mode, storedQso.Mode);
-        Assert.AreEqual(newQso.MyCity, storedQso.MyCity);
-        Assert.AreEqual(newQso.MyCountry, storedQso.MyCountry);
-        Assert.AreEqual(newQso.MyCqZone, storedQso.MyCqZone);
-        Assert.AreEqual(newQso.MyGridsquare, storedQso.MyGridsquare);
-        Assert.AreEqual(newQso.MyItuZone, storedQso.MyItuZone);
-        Assert.AreEqual(newQso.MyLat, storedQso.MyLat);
-        Assert.AreEqual(newQso.MyLon, storedQso.MyLon);
-        Assert.AreEqual(newQso.MyName, storedQso.MyName);
-        Assert.AreEqual(newQso.Name, storedQso.Name);
-        Assert.AreEqual(newQso.Operator, storedQso.Operator);
-        Assert.AreEqual(newQso.QslRcvd, storedQso.QslRcvd);
-        Assert.AreEqual(newQso.QslSent, storedQso.QslSent);
-        Assert.AreEqual(newQso.QslVia, storedQso.QslVia);
-        Assert.AreEqual(newQso.DateTime, storedQso.DateTime);
-        Assert.AreEqual(newQso.DateTimeOff, storedQso.DateTimeOff);
-        Assert.AreEqual(newQso.Qth, storedQso.Qth);
-        Assert.AreEqual(newQso.RstRcvd, storedQso.RstRcvd);
-        Assert.AreEqual(newQso.RstSent, storedQso.RstSent);
-        Assert.AreEqual(newQso.StationCallsign, storedQso.StationCallsign);
+        CompareQSO(storedQso, newQso);
+    }
+
+    [TestMethod]
+    public async Task PutQSO_WithValidData_UpdatesQsoCorrectly()
+    {
+        // Arrange
+        var qsoToUpdateId = 1;
+        var updatedQso = CreateTestQSO();
+        updatedQso.Id = qsoToUpdateId;
+
+        // This is the fix. We need to tell the context to stop tracking the original entity
+        // before we try to attach a new one with the same key.
+        var originalQso = await _context.QSOs.FindAsync(qsoToUpdateId);
+        if (originalQso != null)
+        {
+            _context.Entry(originalQso).State = EntityState.Detached;
+        }
+
+        // Act
+        var result = await _controller.PutQSO(qsoToUpdateId, updatedQso);
+
+        // Assert
+        Assert.IsInstanceOfType(result, typeof(NoContentResult));
+
+        // Retrieve the QSO from the database and verify the update.
+        var storedQso = await _context.QSOs.FindAsync(qsoToUpdateId);
+        Assert.IsNotNull(storedQso, "The QSO was not found in the database after the update.");
+
+        // Verify that all fields were correctly updated.
+        CompareQSO(updatedQso, storedQso);
     }
 }
