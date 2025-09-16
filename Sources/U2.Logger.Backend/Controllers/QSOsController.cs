@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,9 +17,99 @@ public class QSOsController : ControllerBase
 {
     private readonly LoggerContext _context;
 
+    // Define a static list of known bands for validation.
+    private static readonly Dictionary<string, (double min, double max)> KnownBands = new()
+    {
+        { "160M", (1.8, 2.0) },
+        { "80M", (3.5, 4.0) },
+        { "60M", (5.3, 5.4) },
+        { "40M", (7.0, 7.3) },
+        { "30M", (10.1, 10.15) },
+        { "20M", (14.0, 14.35) },
+        { "17M", (18.068, 18.168) },
+        { "15M", (21.0, 21.45) },
+        { "12M", (24.89, 24.99) },
+        { "10M", (28.0, 29.7) },
+        { "6M", (50.0, 54.0) },
+        { "2M", (144.0, 148.0) },
+        { "70CM", (420.0, 450.0) }
+    };
+
+    // Define a static list of known modes for validation.
+    private static readonly HashSet<string> KnownModes = new()
+    {
+        "SSB", "CW", "FM", "AM", "RTTY", "FT8", "PSK31"
+    };
+
     public QSOsController(LoggerContext context)
     {
         _context = context;
+    }
+
+    /// <summary>
+    /// Validates a QSO object against a set of business rules.
+    /// </summary>
+    /// <param name="qso">The QSO object to validate.</param>
+    /// <param name="message">An output parameter that contains a descriptive error message if validation fails.</param>
+    /// <returns>True if the QSO is valid, otherwise false.</returns>
+    private static bool ValidateQSO(QSO qso, out string message)
+    {
+        if (qso == null)
+        {
+            message = "QSO data is required.";
+            return false;
+        }
+
+        // Rule 1: Callsign must be 3 or more symbols.
+        if (string.IsNullOrWhiteSpace(qso.Callsign) || qso.Callsign.Length < 3)
+        {
+            message = "Callsign must be 3 or more characters long.";
+            return false;
+        }
+
+        // Rule 2: DateTime must be in a valid format.
+        // We'll use a standard ISO 8601 format ("o") which is used in the default QSO.
+        if (!DateTime.TryParseExact(qso.DateTime, "o", CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
+        {
+            message = "DateTime must be in a valid ISO 8601 format (e.g., 'yyyy-MM-ddTHH:mm:ss.fffffffZ').";
+            return false;
+        }
+
+        // Rule 3: Mode must be present and one of the known values.
+        if (string.IsNullOrWhiteSpace(qso.Mode) || !KnownModes.Contains(qso.Mode.ToUpperInvariant()))
+        {
+            message = $"Invalid or missing Mode. Valid modes are: {string.Join(", ", KnownModes)}.";
+            return false;
+        }
+
+        // Rule 4: Band or Freq must be present.
+        var hasBand = !string.IsNullOrWhiteSpace(qso.Band);
+        var hasFreq = qso.Freq.HasValue;
+
+        if (!hasBand && !hasFreq)
+        {
+            message = "Either 'Band' or 'Freq' must be present.";
+            return false;
+        }
+
+        // Rule 5: If both Band and Freq are present, they must match.
+        if (hasBand && hasFreq)
+        {
+            if (!KnownBands.TryGetValue(qso.Band.ToUpperInvariant(), out var bandRange))
+            {
+                message = "Invalid 'Band' value. Cannot validate against frequency.";
+                return false;
+            }
+
+            if (qso.Freq.Value < bandRange.min || qso.Freq.Value > bandRange.max)
+            {
+                message = $"Frequency '{qso.Freq}' does not match the specified Band '{qso.Band}'. It should be within the range {bandRange.min}-{bandRange.max} MHz.";
+                return false;
+            }
+        }
+
+        message = string.Empty;
+        return true;
     }
 
     /// <summary>
@@ -107,6 +198,11 @@ public class QSOsController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> PutQSO(int id, QSO qso)
     {
+        if (!ValidateQSO(qso, out var message))
+        {
+            return BadRequest(message);
+        }
+
         if (id != qso?.Id)
         {
             return BadRequest();
@@ -141,6 +237,11 @@ public class QSOsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<QSO>> PostQSO([FromBody] QSO qso)
     {
+        if (!ValidateQSO(qso, out var message))
+        {
+            return BadRequest(message);
+        }
+
         if (_context.QSOs == null)
         {
             return Problem("Entity set 'LoggerContext.QSOs' is null.");

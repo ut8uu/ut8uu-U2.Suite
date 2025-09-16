@@ -286,7 +286,7 @@ public sealed class QsoControllerTests
         var result = await _controller.PutQSO(idFromUrl, null);
 
         // Assert
-        Assert.IsInstanceOfType(result, typeof(BadRequestResult));
+        Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
     }
 
     [TestMethod]
