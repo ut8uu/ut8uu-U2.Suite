@@ -20,13 +20,14 @@ public sealed class QsoControllerTests
     private LoggerContext _context;
     private QSOsController _controller;
 
-    private QSO CreateTestQSO()
+    private QSO CreateDefaultQSO(int? id = null, string callsign = "W1AW")
     {
         return new QSO
         {
+            Id = id ?? 0,
             Band = "17M",
             BandRx = "17M",
-            Callsign = "N2CKH",
+            Callsign = callsign,
             Comment = "This is a test comment.",
             Continent = "NA",
             Country = "United States",
@@ -193,7 +194,7 @@ public sealed class QsoControllerTests
     public async Task PostQSO_WithValidData_ReturnsCreatedResponseAndStoresCorrectly()
     {
         // Arrange
-        var newQso = CreateTestQSO();
+        var newQso = CreateDefaultQSO();
 
         // Act
         var result = await _controller.PostQSO(newQso);
@@ -219,7 +220,7 @@ public sealed class QsoControllerTests
     {
         // Arrange
         var qsoToUpdateId = 1;
-        var updatedQso = CreateTestQSO();
+        var updatedQso = CreateDefaultQSO();
         updatedQso.Id = qsoToUpdateId;
 
         // This is the fix. We need to tell the context to stop tracking the original entity
@@ -242,5 +243,49 @@ public sealed class QsoControllerTests
 
         // Verify that all fields were correctly updated.
         CompareQSO(updatedQso, storedQso);
+    }
+
+    [TestMethod]
+    public async Task PutQSO_WithNonExistentId_ReturnsNotFound()
+    {
+        // Arrange
+        var nonExistentId = 99;
+        var updatedQso = CreateDefaultQSO(nonExistentId, "NONEXISTENT");
+
+        // Act
+        var result = await _controller.PutQSO(nonExistentId, updatedQso);
+
+        // Assert
+        Assert.IsInstanceOfType(result, typeof(NotFoundResult));
+    }
+
+    [TestMethod]
+    public async Task PutQSO_WithMismatchingId_ReturnsBadRequest()
+    {
+        // Arrange
+        var idFromUrl = 1;
+        var qsoToUpdate = CreateDefaultQSO(2, "MISMATCH");
+
+        // Act
+        var result = await _controller.PutQSO(idFromUrl, qsoToUpdate);
+
+        // Assert
+        Assert.IsInstanceOfType(result, typeof(BadRequestResult));
+        var storedQso = await _context.QSOs.FindAsync(idFromUrl);
+        Assert.AreEqual("W1AW", storedQso.Callsign, "The QSO was incorrectly updated.");
+    }
+
+    [TestMethod]
+    public async Task PutQSO_WithNullQso_ReturnsBadRequest()
+    {
+        // Arrange
+        var idFromUrl = 1;
+
+        // Act
+        // Pass a null QSO object to the method
+        var result = await _controller.PutQSO(idFromUrl, null);
+
+        // Assert
+        Assert.IsInstanceOfType(result, typeof(BadRequestResult));
     }
 }

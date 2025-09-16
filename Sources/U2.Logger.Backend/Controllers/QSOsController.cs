@@ -107,7 +107,7 @@ public class QSOsController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> PutQSO(int id, QSO qso)
     {
-        if (id != qso.Id)
+        if (id != qso?.Id)
         {
             return BadRequest();
         }
