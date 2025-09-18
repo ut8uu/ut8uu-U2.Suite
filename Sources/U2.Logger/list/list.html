@@ -66,7 +66,7 @@
                         <td class="p-2 border border-gray-600">${qso.rcvd}</td>
                         <td class="p-2 border border-gray-600">${qso.name}</td>
                         <td class="p-2 border border-gray-600">${qso.comment}</td>
-                        <td class="p-2 border border-gray-600">${new Date(qso.dateTime).toLocaleString()}</td>
+                        <td class="p-2 border border-gray-600">${new Date(qso.dateTime * 1000).toLocaleString()}</td>
                         <td class="p-2 border border-gray-600">${qso.band}</td>
                         <td class="p-2 border border-gray-600">${qso.mode}</td>
                         <td class="p-2 border border-gray-600">${qso.propagation}</td>

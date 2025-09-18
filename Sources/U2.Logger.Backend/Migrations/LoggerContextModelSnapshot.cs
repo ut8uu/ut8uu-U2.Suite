@@ -23,6 +23,14 @@ partial class LoggerContextModelSnapshot : ModelSnapshot
                 .ValueGeneratedOnAdd()
                 .HasColumnType("INTEGER");
 
+            b.Property<string>("DateTime")
+                .HasColumnName("date_time")
+                .HasColumnType("INTEGER");
+
+            b.Property<string>("DateTimeOff")
+                .HasColumnName("date_time_off")
+                .HasColumnType("INTEGER");
+
             b.Property<string>("Band")
                 .HasColumnName("band")
                 .HasColumnType("TEXT");
@@ -141,14 +149,6 @@ partial class LoggerContextModelSnapshot : ModelSnapshot
 
             b.Property<string>("QslVia")
                 .HasColumnName("qsl_via")
-                .HasColumnType("TEXT");
-
-            b.Property<string>("DateTime")
-                .HasColumnName("date_time")
-                .HasColumnType("TEXT");
-
-            b.Property<string>("DateTimeOff")
-                .HasColumnName("date_time_off")
                 .HasColumnType("TEXT");
 
             b.Property<string>("Qth")

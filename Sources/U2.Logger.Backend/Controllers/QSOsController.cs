@@ -69,9 +69,9 @@ public class QSOsController : ControllerBase
 
         // Rule 2: DateTime must be in a valid format.
         // We'll use a standard ISO 8601 format ("o") which is used in the default QSO.
-        if (!DateTime.TryParseExact(qso.DateTime, "o", CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
+        if (!qso.DateTime.HasValue)
         {
-            message = "DateTime must be in a valid ISO 8601 format (e.g., 'yyyy-MM-ddTHH:mm:ss.fffffffZ').";
+            message = "DateTime is a mandatory field.";
             return false;
         }
 
@@ -101,7 +101,7 @@ public class QSOsController : ControllerBase
                 return false;
             }
 
-            if (qso.Freq.Value < bandRange.min || qso.Freq.Value > bandRange.max)
+            if (qso.Freq > 0 && (qso.Freq.Value < bandRange.min || qso.Freq.Value > bandRange.max))
             {
                 message = $"Frequency '{qso.Freq}' does not match the specified Band '{qso.Band}'. It should be within the range {bandRange.min}-{bandRange.max} MHz.";
                 return false;

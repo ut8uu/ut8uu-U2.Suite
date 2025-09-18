@@ -12,6 +12,8 @@ public partial class InitialCreate : Migration
             {
                 Id = table.Column<int>(type: "INTEGER", nullable: false)
                     .Annotation("Sqlite:Autoincrement", true),
+                DateTime = table.Column<string>(name: "date_time", type: "INTEGER", nullable: true),
+                DateTimeOff = table.Column<string>(name: "date_time_off", type: "INTEGER", nullable: true),
                 Band = table.Column<string>(name: "band", type: "TEXT", nullable: true),
                 BandRx = table.Column<string>(name: "band_rx", type: "TEXT", nullable: true),
                 Callsign = table.Column<string>(name: "call", type: "TEXT", nullable: true),
@@ -42,8 +44,6 @@ public partial class InitialCreate : Migration
                 QslRcvd = table.Column<string>(name: "qsl_rcvd", type: "TEXT", nullable: true),
                 QslSent = table.Column<string>(name: "qsl_sent", type: "TEXT", nullable: true),
                 QslVia = table.Column<string>(name: "qsl_via", type: "TEXT", nullable: true),
-                DateTime = table.Column<string>(name: "date_time", type: "TEXT", nullable: true),
-                DateTimeOff = table.Column<string>(name: "date_time_off", type: "TEXT", nullable: true),
                 Qth = table.Column<string>(name: "qth", type: "TEXT", nullable: true),
                 RstRcvd = table.Column<string>(name: "rst_rcvd", type: "TEXT", nullable: true),
                 RstSent = table.Column<string>(name: "rst_sent", type: "TEXT", nullable: true),

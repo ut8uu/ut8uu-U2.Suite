@@ -12,7 +12,7 @@ function createWindow() {
         }
     });
 
-    mainWindow.loadFile('index.html');
+    mainWindow.loadFile('index/index.html');
 }
 
 app.whenReady().then(createWindow);
@@ -38,7 +38,7 @@ ipcMain.on('open-list-window', () => {
             preload: path.join(__dirname, 'preload.js')
         }
     });
-    listWindow.loadFile('list.html');
+    listWindow.loadFile('list/list.html');
 });
 
 // IPC Handler for resizing the window

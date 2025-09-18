@@ -187,18 +187,18 @@ function initializeApp() {
     const saveQSO = async () => {
         let qsoDateTime;
         if (realTimeCheckbox.checked) {
-            qsoDateTime = new Date().toISOString();
+            qsoDateTime = Math.floor(new Date() / 1000);
         } else {
             const dateVal = datePicker.value;
             const timeVal = timePicker.value;
             if (dateVal && timeVal) {
                 if (utcCheckbox.checked) {
                     // User input is already in UTC
-                    qsoDateTime = new Date(`${dateVal}T${timeVal}:00Z`).toISOString();
+                    qsoDateTime = Math.floor(new Date(`${dateVal}T${timeVal}:00Z`) / 1000);
                 } else {
                     // User input is in local time, convert to UTC
                     const localDateTime = new Date(`${dateVal}T${timeVal}:00`);
-                    qsoDateTime = localDateTime.toISOString();
+                    qsoDateTime = Math.floor(localDateTime / 1000);
                 }
             } else {
                 console.error('Manual date and time fields must be filled.');
@@ -314,7 +314,7 @@ function initializeApp() {
             // Populate the table with the QSOs
             latestQSOs.forEach(qso => {
                 const row = document.createElement('tr');
-                const qsoDateTime = new Date(qso.dateTime);
+                const qsoDateTime = new Date(qso.dateTime * 1000);
                 const dateString = qsoDateTime.toLocaleDateString();
                 const timeString = qsoDateTime.toLocaleTimeString();
 

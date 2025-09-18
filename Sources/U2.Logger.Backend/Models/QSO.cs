@@ -9,14 +9,23 @@ public class QSO
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
 
+    [Column("call")]
+    public string? Callsign { get; set; }
+
+    [Column("date_time")]
+    public long? DateTime { get; set; }
+
+    [Column("date_time_off")]
+    public long? DateTimeOff { get; set; }
+
     [Column("band")]
     public string? Band { get; set; }
 
     [Column("band_rx")]
     public string? BandRx { get; set; }
 
-    [Column("call")]
-    public string? Callsign { get; set; }
+    [Column("mode")]
+    public string? Mode { get; set; }
 
     [Column("comment")]
     public string? Comment { get; set; }
@@ -57,9 +66,6 @@ public class QSO
     [Column("lon")]
     public string? Lon { get; set; }
 
-    [Column("mode")]
-    public string? Mode { get; set; }
-
     [Column("my_city")]
     public string? MyCity { get; set; }
 
@@ -98,12 +104,6 @@ public class QSO
 
     [Column("qsl_via")]
     public string? QslVia { get; set; }
-
-    [Column("date_time")]
-    public string? DateTime { get; set; }
-
-    [Column("date_time_off")]
-    public string? DateTimeOff { get; set; }
 
     [Column("qth")]
     public string? Qth { get; set; }

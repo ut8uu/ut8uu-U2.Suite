@@ -55,7 +55,7 @@ public sealed class QsoControllerTests
             QslRcvd = "Y",
             QslSent = "Y",
             QslVia = "LOTW",
-            DateTime = DateTime.UtcNow.ToString("o"),
+            DateTime = DateTime.UtcNow.Ticks / TimeSpan.TicksPerSecond,
             DateTimeOff = null,
             Qth = "New York, NY",
             RstRcvd = "599",
@@ -127,7 +127,7 @@ public sealed class QsoControllerTests
         _context.QSOs.Add(new QSO
         {
             Id = 1,
-            DateTime = new DateTime(2025, 9, 15, 12, 0, 0).ToString("o"),
+            DateTime = new DateTime(2025, 9, 15, 12, 0, 0).Ticks / TimeSpan.TicksPerSecond,
             Band = "20M",
             Callsign = "W1AW",
             Freq = 14.250,
@@ -139,7 +139,7 @@ public sealed class QsoControllerTests
         _context.QSOs.Add(new QSO
         {
             Id = 2,
-            DateTime = new DateTime(2025, 9, 15, 12, 30, 0).ToString("o"),
+            DateTime = new DateTime(2025, 9, 15, 12, 30, 0).Ticks / TimeSpan.TicksPerSecond,
             Band = "40M",
             Callsign = "K9AT",
             Freq = 7.150,
