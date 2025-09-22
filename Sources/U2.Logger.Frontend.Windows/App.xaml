@@ -39,13 +39,86 @@
         </Style>
 
         <Style x:Key="FormComboBoxStyle" TargetType="ComboBox">
-            <Setter Property="Background" Value="#2D3748"/>
-            <Setter Property="BorderBrush" Value="#4A5568"/>
             <Setter Property="Foreground" Value="#A0AEC0"/>
             <Setter Property="Padding" Value="5"/>
             <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#4A5568"/>
+            <Setter Property="Background" Value="#2D3748"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="20"/>
+                            </Grid.ColumnDefinitions>
+                            <!-- This Border is the background of the ComboBox -->
+                            <Border Grid.ColumnSpan="2"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="3"/>
+
+                            <!-- The ContentPresenter displays the selected item -->
+                            <ContentPresenter Grid.Column="0"
+                                              Margin="{TemplateBinding Padding}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              Content="{TemplateBinding SelectionBoxItem}"
+                                              ContentTemplate="{TemplateBinding ItemTemplate}"
+                                              ContentStringFormat="{TemplateBinding ItemStringFormat}"/>
+
+                            <!-- The ToggleButton is the dropdown arrow -->
+                            <ToggleButton Grid.Column="1"
+                                          Background="Transparent"
+                                          BorderBrush="Transparent"
+                                          IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                                <Path Fill="{TemplateBinding Foreground}"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      Data="M0,0 L4,4 L8,0 Z"/>
+                            </ToggleButton>
+
+                            <!-- The Popup contains the dropdown list -->
+                            <Popup x:Name="PART_Popup"
+                                   AllowsTransparency="True"
+                                   Placement="Bottom"
+                                   StaysOpen="True"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   PopupAnimation="Slide">
+                                <Border Margin="0,1,0,0"
+                                        Background="#2D3748"
+                                        BorderBrush="#4A5568"
+                                        BorderThickness="1"
+                                        CornerRadius="3">
+                                    <ScrollViewer>
+                                        <StackPanel IsItemsHost="True"/>
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#4A5568"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
 
+        <Style TargetType="ComboBoxItem">
+            <Setter Property="Background" Value="#2D3748"/>
+            <Setter Property="Foreground" Value="#A0AEC0"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="Padding" Value="5"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#4A5568"/>
+                    <Setter Property="Foreground" Value="White"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
         <Style x:Key="FormButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="#3182CE"/>
             <Setter Property="Foreground" Value="White"/>
