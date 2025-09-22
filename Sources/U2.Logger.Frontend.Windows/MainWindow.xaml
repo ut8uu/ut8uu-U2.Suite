@@ -1,0 +1,130 @@
+﻿<Window x:Class="U2.Logger.Frontend.Windows.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:U2.Logger.Frontend.Windows"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Main Log Form View -->
+        <Border Grid.Row="0" Margin="0,0,0,10" Background="#1A202C" CornerRadius="8">
+            <StackPanel Orientation="Vertical" Margin="10">
+
+                <!-- Callsign Section -->
+                <StackPanel Margin="0,0,0,10">
+                    <Label Content="Callsign" Foreground="#A0AEC0" FontWeight="Bold"/>
+                    <TextBox x:Name="CallsignTextBox" Style="{StaticResource FormTextBoxStyle}" />
+                </StackPanel>
+
+                <!-- Snt/Rcvd/Name/Comment Section -->
+                <Grid Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Snt -->
+                    <StackPanel Grid.Column="0" Margin="0,0,5,0">
+                        <Label Content="Snt" Foreground="#A0AEC0" FontWeight="Bold"/>
+                        <TextBox x:Name="SntTextBox" Text="59" Style="{StaticResource FormTextBoxStyle}" />
+                    </StackPanel>
+
+                    <!-- Rcvd -->
+                    <StackPanel Grid.Column="1" Margin="5,0,5,0">
+                        <Label Content="Rcvd" Foreground="#A0AEC0" FontWeight="Bold"/>
+                        <TextBox x:Name="RcvdTextBox" Text="59" Style="{StaticResource FormTextBoxStyle}" />
+                    </StackPanel>
+
+                    <!-- Name -->
+                    <StackPanel Grid.Column="2" Margin="5,0,5,0">
+                        <Label Content="Name" Foreground="#A0AEC0" FontWeight="Bold"/>
+                        <TextBox x:Name="NameTextBox" Style="{StaticResource FormTextBoxStyle}" />
+                    </StackPanel>
+
+                    <!-- Comment -->
+                    <StackPanel Grid.Column="3" Margin="5,0,0,0">
+                        <Label Content="Comment" Foreground="#A0AEC0" FontWeight="Bold"/>
+                        <TextBox x:Name="CommentTextBox" Style="{StaticResource FormTextBoxStyle}" />
+                    </StackPanel>
+                </Grid>
+
+                <!-- Date/Time Section -->
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10" VerticalAlignment="Center">
+                    <TextBlock Text="Date/Time" Foreground="#ECC94B" FontWeight="Bold" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                    <CheckBox x:Name="RealTimeCheckBox" Content="Real-time" IsChecked="True" Foreground="#A0AEC0" Margin="0,0,5,0" VerticalAlignment="Center" />
+                    <CheckBox x:Name="UTCCheckBox" Content="UTC" IsChecked="True" Foreground="#A0AEC0" Margin="0,0,10,0" VerticalAlignment="Center" />
+
+                    <TextBox x:Name="DateTimeTextBox" IsReadOnly="True" IsEnabled="False" Style="{StaticResource FormTextBoxStyle}" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <!-- Band/Mode/Propagation Section -->
+                <Grid Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Band -->
+                    <StackPanel Grid.Column="0" Margin="0,0,5,0">
+                        <Label Content="Band" Foreground="#A0AEC0" FontWeight="Bold"/>
+                        <ComboBox x:Name="BandComboBox" Style="{StaticResource FormComboBoxStyle}" />
+                    </StackPanel>
+
+                    <!-- Mode -->
+                    <StackPanel Grid.Column="1" Margin="5,0,5,0">
+                        <Label Content="Mode" Foreground="#A0AEC0" FontWeight="Bold"/>
+                        <ComboBox x:Name="ModeComboBox" Style="{StaticResource FormComboBoxStyle}" />
+                    </StackPanel>
+
+                    <!-- Propagation -->
+                    <StackPanel Grid.Column="2" Margin="5,0,0,0">
+                        <Label Content="Propagation" Foreground="#A0AEC0" FontWeight="Bold"/>
+                        <ComboBox x:Name="PropagationComboBox" Style="{StaticResource FormComboBoxStyle}" />
+                    </StackPanel>
+                </Grid>
+
+            </StackPanel>
+        </Border>
+
+        <!-- New Row of Buttons -->
+        <Grid Grid.Row="1" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0" Content="Last QSO" Margin="0,0,5,0" Style="{StaticResource FormButtonStyle}"/>
+            <Button Grid.Column="1" Content="List" Margin="5,0,5,0" Style="{StaticResource FormButtonStyle}"/>
+            <Button Grid.Column="2" Content="Save" Margin="5,0,5,0" Style="{StaticResource FormButtonStyle}"/>
+            <Button Grid.Column="3" Content="Wipe" Margin="5,0,0,0" Style="{StaticResource FormButtonStyle}"/>
+        </Grid>
+
+        <!-- Container for the QSO table, initially hidden -->
+        <Border Grid.Row="2" Background="#1A202C" CornerRadius="8" Padding="10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Text="Last 25 QSOs" FontSize="16" FontWeight="Bold" Foreground="#A0AEC0" Margin="0,0,0,10"/>
+
+                <DataGrid Grid.Row="1" x:Name="QSODataGrid" AutoGenerateColumns="True" Style="{StaticResource DataGridStyle}"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

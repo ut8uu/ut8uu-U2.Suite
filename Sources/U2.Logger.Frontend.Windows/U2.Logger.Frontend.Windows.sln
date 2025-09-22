@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36310.24 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "U2.Logger.Frontend.Windows", "U2.Logger.Frontend.Windows.csproj", "{241BFD19-D61C-4B8D-A8A8-B2C629B46AB9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "U2.Logger.Core", "..\U2.Logger.Core\U2.Logger.Core.csproj", "{40482AF5-FD6E-4E68-A198-720745CD737B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{241BFD19-D61C-4B8D-A8A8-B2C629B46AB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{241BFD19-D61C-4B8D-A8A8-B2C629B46AB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{241BFD19-D61C-4B8D-A8A8-B2C629B46AB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{241BFD19-D61C-4B8D-A8A8-B2C629B46AB9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40482AF5-FD6E-4E68-A198-720745CD737B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40482AF5-FD6E-4E68-A198-720745CD737B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40482AF5-FD6E-4E68-A198-720745CD737B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40482AF5-FD6E-4E68-A198-720745CD737B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D7EC5C6F-D585-44B8-9202-E6D6534158D2}
+	EndGlobalSection
+EndGlobal
