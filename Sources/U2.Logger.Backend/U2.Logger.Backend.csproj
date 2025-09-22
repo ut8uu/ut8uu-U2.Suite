@@ -19,4 +19,8 @@
     <Folder Include="Migrations\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\U2.Logger.Core\U2.Logger.Core.csproj" />
+  </ItemGroup>
+
 </Project>

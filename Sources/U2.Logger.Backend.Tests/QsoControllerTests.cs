@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 using U2.Logger.Backend.Controllers;
 using U2.Logger.Backend.Data;
+using U2.Logger.Backend.Extensions;
 using U2.Logger.Backend.Models;
 
 namespace U2.Logger.Backend.Tests;
@@ -20,9 +21,9 @@ public sealed class QsoControllerTests
     private LoggerContext _context;
     private QSOsController _controller;
 
-    private QSO CreateDefaultQSO(int? id = null, string callsign = "W1AW")
+    private Core.Models.QSO CreateDefaultQSO(int? id = null, string callsign = "W1AW")
     {
-        return new QSO
+        return new Core.Models.QSO
         {
             Id = id ?? 0,
             Band = "17M",
@@ -64,7 +65,7 @@ public sealed class QsoControllerTests
         };
     }
 
-    private void CompareQSO(QSO qso1, QSO qso2)
+    private void CompareQSO(Core.Models.QSO qso1, Core.Models.QSO qso2)
     {
         Assert.AreEqual(qso1.Band, qso2.Band);
         Assert.AreEqual(qso1.BandRx, qso2.BandRx);
@@ -212,7 +213,7 @@ public sealed class QsoControllerTests
         var storedQso = await _context.QSOs.FindAsync(returnedQso.Id);
         Assert.IsNotNull(storedQso, "The QSO was not found in the database.");
 
-        CompareQSO(storedQso, newQso);
+        CompareQSO(storedQso.ToDto(), newQso);
     }
 
     [TestMethod]
@@ -242,7 +243,7 @@ public sealed class QsoControllerTests
         Assert.IsNotNull(storedQso, "The QSO was not found in the database after the update.");
 
         // Verify that all fields were correctly updated.
-        CompareQSO(updatedQso, storedQso);
+        CompareQSO(updatedQso, storedQso.ToDto());
     }
 
     [TestMethod]

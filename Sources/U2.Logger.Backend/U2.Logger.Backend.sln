@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "U2.Logger.Backend", "U2.Log
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "U2.Logger.Backend.Tests", "..\U2.Logger.Backend.Tests\U2.Logger.Backend.Tests.csproj", "{A90AC329-4A42-4B9F-8364-4ABDB7BBB359}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "U2.Logger.Core", "..\U2.Logger.Core\U2.Logger.Core.csproj", "{0B08B18B-A906-2988-07C3-B0FB0EAC216F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{A90AC329-4A42-4B9F-8364-4ABDB7BBB359}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A90AC329-4A42-4B9F-8364-4ABDB7BBB359}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A90AC329-4A42-4B9F-8364-4ABDB7BBB359}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B08B18B-A906-2988-07C3-B0FB0EAC216F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B08B18B-A906-2988-07C3-B0FB0EAC216F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B08B18B-A906-2988-07C3-B0FB0EAC216F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B08B18B-A906-2988-07C3-B0FB0EAC216F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

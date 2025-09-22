@@ -7,7 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 using U2.Logger.Backend.Data;
+using U2.Logger.Backend.Extensions;
 using U2.Logger.Backend.Models;
+using U2.Logger.Backend.Services;
+using U2.Logger.Core.Models;
 
 namespace U2.Logger.Backend.Controllers;
 
@@ -17,99 +20,9 @@ public class QSOsController : ControllerBase
 {
     private readonly LoggerContext _context;
 
-    // Define a static list of known bands for validation.
-    private static readonly Dictionary<string, (double min, double max)> KnownBands = new()
-    {
-        { "160M", (1.8, 2.0) },
-        { "80M", (3.5, 4.0) },
-        { "60M", (5.3, 5.4) },
-        { "40M", (7.0, 7.3) },
-        { "30M", (10.1, 10.15) },
-        { "20M", (14.0, 14.35) },
-        { "17M", (18.068, 18.168) },
-        { "15M", (21.0, 21.45) },
-        { "12M", (24.89, 24.99) },
-        { "10M", (28.0, 29.7) },
-        { "6M", (50.0, 54.0) },
-        { "2M", (144.0, 148.0) },
-        { "70CM", (420.0, 450.0) }
-    };
-
-    // Define a static list of known modes for validation.
-    private static readonly HashSet<string> KnownModes = new()
-    {
-        "SSB", "CW", "FM", "AM", "RTTY", "FT8", "PSK31"
-    };
-
     public QSOsController(LoggerContext context)
     {
         _context = context;
-    }
-
-    /// <summary>
-    /// Validates a QSO object against a set of business rules.
-    /// </summary>
-    /// <param name="qso">The QSO object to validate.</param>
-    /// <param name="message">An output parameter that contains a descriptive error message if validation fails.</param>
-    /// <returns>True if the QSO is valid, otherwise false.</returns>
-    private static bool ValidateQSO(QSO qso, out string message)
-    {
-        if (qso == null)
-        {
-            message = "QSO data is required.";
-            return false;
-        }
-
-        // Rule 1: Callsign must be 3 or more symbols.
-        if (string.IsNullOrWhiteSpace(qso.Callsign) || qso.Callsign.Length < 3)
-        {
-            message = "Callsign must be 3 or more characters long.";
-            return false;
-        }
-
-        // Rule 2: DateTime must be in a valid format.
-        // We'll use a standard ISO 8601 format ("o") which is used in the default QSO.
-        if (!qso.DateTime.HasValue)
-        {
-            message = "DateTime is a mandatory field.";
-            return false;
-        }
-
-        // Rule 3: Mode must be present and one of the known values.
-        if (string.IsNullOrWhiteSpace(qso.Mode) || !KnownModes.Contains(qso.Mode.ToUpperInvariant()))
-        {
-            message = $"Invalid or missing Mode. Valid modes are: {string.Join(", ", KnownModes)}.";
-            return false;
-        }
-
-        // Rule 4: Band or Freq must be present.
-        var hasBand = !string.IsNullOrWhiteSpace(qso.Band);
-        var hasFreq = qso.Freq.HasValue;
-
-        if (!hasBand && !hasFreq)
-        {
-            message = "Either 'Band' or 'Freq' must be present.";
-            return false;
-        }
-
-        // Rule 5: If both Band and Freq are present, they must match.
-        if (hasBand && hasFreq)
-        {
-            if (!KnownBands.TryGetValue(qso.Band.ToUpperInvariant(), out var bandRange))
-            {
-                message = "Invalid 'Band' value. Cannot validate against frequency.";
-                return false;
-            }
-
-            if (qso.Freq > 0 && (qso.Freq.Value < bandRange.min || qso.Freq.Value > bandRange.max))
-            {
-                message = $"Frequency '{qso.Freq}' does not match the specified Band '{qso.Band}'. It should be within the range {bandRange.min}-{bandRange.max} MHz.";
-                return false;
-            }
-        }
-
-        message = string.Empty;
-        return true;
     }
 
     /// <summary>
@@ -122,14 +35,14 @@ public class QSOsController : ControllerBase
     /// <param name="callsignContains">Optional filter to search for callsigns containing a specific string.</param>
     /// <returns>A list of QSOs.</returns>
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<QSO>>> GetQSOs(
+    public async Task<ActionResult<IEnumerable<Core.Models.QSO>>> GetQSOs(
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 50,
         [FromQuery] string sortKey = "DateTime",
         [FromQuery] string sortDirection = "desc",
         [FromQuery] string? callsignContains = null)
     {
-        IQueryable<QSO> query = _context.QSOs;
+        IQueryable<Models.QSO> query = _context.QSOs;
 
         if (!string.IsNullOrEmpty(callsignContains))
         {
@@ -163,7 +76,9 @@ public class QSOsController : ControllerBase
             .Take(pageSize)
             .ToListAsync();
 
-        return Ok(qsos);
+        var resultingList = qsos.Select(q => q.ToDto()).ToList();
+
+        return Ok(resultingList);
     }
 
     /// <summary>
@@ -172,7 +87,7 @@ public class QSOsController : ControllerBase
     /// <param name="id">The ID of the QSO.</param>
     /// <returns>The QSO with the specified ID.</returns>
     [HttpGet("{id}")]
-    public async Task<ActionResult<QSO>> GetQSO(int id)
+    public async Task<ActionResult<Core.Models.QSO>> GetQSO(int id)
     {
         if (_context.QSOs == null)
         {
@@ -186,7 +101,7 @@ public class QSOsController : ControllerBase
             return NotFound();
         }
 
-        return qso;
+        return qso.ToDto();
     }
 
     /// <summary>
@@ -196,9 +111,9 @@ public class QSOsController : ControllerBase
     /// <param name="qso">The updated QSO object.</param>
     /// <returns>A NoContent response if successful, or NotFound if the QSO does not exist.</returns>
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutQSO(int id, QSO qso)
+    public async Task<IActionResult> PutQSO(int id, Core.Models.QSO qso)
     {
-        if (!ValidateQSO(qso, out var message))
+        if (!QSOValidator.IsValid(qso, out var message))
         {
             return BadRequest(message);
         }
@@ -235,22 +150,21 @@ public class QSOsController : ControllerBase
     /// <param name="qso">The QSO object to be created.</param>
     /// <returns>The newly created QSO object.</returns>
     [HttpPost]
-    public async Task<ActionResult<QSO>> PostQSO([FromBody] QSO qso)
+    public async Task<ActionResult<Core.Models.QSO>> PostQSO(Core.Models.QSO qsoDto)
     {
-        if (!ValidateQSO(qso, out var message))
+        if (!QSOValidator.IsValid(qsoDto, out var message))
         {
             return BadRequest(message);
         }
 
-        if (_context.QSOs == null)
-        {
-            return Problem("Entity set 'LoggerContext.QSOs' is null.");
-        }
+        // Use the extension method to convert the DTO to the backend model
+        var qsoBackend = qsoDto.ToBackendModel();
 
-        _context.QSOs.Add(qso);
+        _context.QSOs.Add(qsoBackend);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction("GetQSO", new { id = qso.Id }, qso);
+        // Optionally, return the converted DTO back to the client
+        return CreatedAtAction("GetQSO", new { id = qsoBackend.Id }, qsoBackend.ToDto());
     }
 
     /// <summary>
