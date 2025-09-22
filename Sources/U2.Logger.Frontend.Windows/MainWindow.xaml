@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:U2.Logger.Frontend.Windows"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid Margin="10">
+        Title="U2.Suite: Logger" Height="350" Width="800">
+    <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -17,17 +17,17 @@
         </Grid.RowDefinitions>
 
         <!-- Main Log Form View -->
-        <Border Grid.Row="0" Margin="0,0,0,10" Background="#1A202C" CornerRadius="8">
-            <StackPanel Orientation="Vertical" Margin="10">
+        <Border Grid.Row="0" Margin="0,0,0,5" Background="#1A202C" CornerRadius="8">
+            <StackPanel Orientation="Vertical" Margin="5">
 
                 <!-- Callsign Section -->
-                <StackPanel Margin="0,0,0,10">
-                    <Label Content="Callsign" Foreground="#A0AEC0" FontWeight="Bold"/>
-                    <TextBox x:Name="CallsignTextBox" Style="{StaticResource FormTextBoxStyle}" />
+                <StackPanel Margin="0,0,0,5">
+                    <Label Content="Callsign" Style="{StaticResource FormLabelStyle}"/>
+                    <TextBox x:Name="CallsignTextBox" Style="{StaticResource FormTextBigBoxStyle}" />
                 </StackPanel>
 
                 <!-- Snt/Rcvd/Name/Comment Section -->
-                <Grid Margin="0,0,0,10">
+                <Grid Margin="0,0,0,5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
@@ -37,40 +37,40 @@
 
                     <!-- Snt -->
                     <StackPanel Grid.Column="0" Margin="0,0,5,0">
-                        <Label Content="Snt" Foreground="#A0AEC0" FontWeight="Bold"/>
+                        <Label Content="Snt" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox x:Name="SntTextBox" Text="59" Style="{StaticResource FormTextBoxStyle}" />
                     </StackPanel>
 
                     <!-- Rcvd -->
                     <StackPanel Grid.Column="1" Margin="5,0,5,0">
-                        <Label Content="Rcvd" Foreground="#A0AEC0" FontWeight="Bold"/>
+                        <Label Content="Rcvd" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox x:Name="RcvdTextBox" Text="59" Style="{StaticResource FormTextBoxStyle}" />
                     </StackPanel>
 
                     <!-- Name -->
                     <StackPanel Grid.Column="2" Margin="5,0,5,0">
-                        <Label Content="Name" Foreground="#A0AEC0" FontWeight="Bold"/>
+                        <Label Content="Name" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox x:Name="NameTextBox" Style="{StaticResource FormTextBoxStyle}" />
                     </StackPanel>
 
                     <!-- Comment -->
                     <StackPanel Grid.Column="3" Margin="5,0,0,0">
-                        <Label Content="Comment" Foreground="#A0AEC0" FontWeight="Bold"/>
+                        <Label Content="Comment" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox x:Name="CommentTextBox" Style="{StaticResource FormTextBoxStyle}" />
                     </StackPanel>
                 </Grid>
 
                 <!-- Date/Time Section -->
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,10" VerticalAlignment="Center">
-                    <TextBlock Text="Date/Time" Foreground="#ECC94B" FontWeight="Bold" Margin="0,0,5,0" VerticalAlignment="Center"/>
-                    <CheckBox x:Name="RealTimeCheckBox" Content="Real-time" IsChecked="True" Foreground="#A0AEC0" Margin="0,0,5,0" VerticalAlignment="Center" />
-                    <CheckBox x:Name="UTCCheckBox" Content="UTC" IsChecked="True" Foreground="#A0AEC0" Margin="0,0,10,0" VerticalAlignment="Center" />
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="Date/Time" Style="{StaticResource FormTextBlockLabelStyle}"/>
+                    <CheckBox x:Name="RealTimeCheckBox" Content="Real-time" IsChecked="True" Style="{StaticResource FormCheckBoxStyle}" />
+                    <CheckBox x:Name="UTCCheckBox" Content="UTC" IsChecked="True" Style="{StaticResource FormCheckBoxStyle}" />
 
                     <TextBox x:Name="DateTimeTextBox" IsReadOnly="True" IsEnabled="False" Style="{StaticResource FormTextBoxStyle}" VerticalAlignment="Center"/>
                 </StackPanel>
 
                 <!-- Band/Mode/Propagation Section -->
-                <Grid Margin="0,0,0,10">
+                <Grid Margin="0,0,0,5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
@@ -79,19 +79,19 @@
 
                     <!-- Band -->
                     <StackPanel Grid.Column="0" Margin="0,0,5,0">
-                        <Label Content="Band" Foreground="#A0AEC0" FontWeight="Bold"/>
+                        <Label Content="Band" Style="{StaticResource FormLabelStyle}"/>
                         <ComboBox x:Name="BandComboBox" Style="{StaticResource FormComboBoxStyle}" />
                     </StackPanel>
 
                     <!-- Mode -->
                     <StackPanel Grid.Column="1" Margin="5,0,5,0">
-                        <Label Content="Mode" Foreground="#A0AEC0" FontWeight="Bold"/>
+                        <Label Content="Mode" Style="{StaticResource FormLabelStyle}"/>
                         <ComboBox x:Name="ModeComboBox" Style="{StaticResource FormComboBoxStyle}" />
                     </StackPanel>
 
                     <!-- Propagation -->
                     <StackPanel Grid.Column="2" Margin="5,0,0,0">
-                        <Label Content="Propagation" Foreground="#A0AEC0" FontWeight="Bold"/>
+                        <Label Content="Propagation" Style="{StaticResource FormLabelStyle}"/>
                         <ComboBox x:Name="PropagationComboBox" Style="{StaticResource FormComboBoxStyle}" />
                     </StackPanel>
                 </Grid>
@@ -100,7 +100,7 @@
         </Border>
 
         <!-- New Row of Buttons -->
-        <Grid Grid.Row="1" Margin="0,0,0,10">
+        <Grid Grid.Row="1" Margin="0,0,0,5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
@@ -115,7 +115,7 @@
         </Grid>
 
         <!-- Container for the QSO table, initially hidden -->
-        <Border Grid.Row="2" Background="#1A202C" CornerRadius="8" Padding="10">
+        <Border Grid.Row="2" Background="#1A202C" CornerRadius="8" Padding="5" Visibility="Collapsed">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
