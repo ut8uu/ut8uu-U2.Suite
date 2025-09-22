@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Net.Http;
 using System.Text;
 using System.Windows;
@@ -10,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 using Newtonsoft.Json;
 
@@ -22,6 +24,9 @@ public partial class MainWindow : Window
     private readonly TextBox rcvdTextBox;
     private readonly Button saveButton;
 
+    private readonly DispatcherTimer _timer;
+    private bool _initialized = false;
+
     public ObservableCollection<Core.Models.QSO> QSOs { get; set; }
 
     public MainWindow()
@@ -32,6 +37,15 @@ public partial class MainWindow : Window
         QSODataGrid.ItemsSource = QSOs;
 
         PopulateControls();
+
+        _timer = new DispatcherTimer
+        {
+            Interval = TimeSpan.FromSeconds(1)
+        };
+        _timer.Tick += Timer_Tick;
+        _timer.Start();
+
+        _initialized = true;
     }
 
     private void PopulateControls()
@@ -110,11 +124,46 @@ public partial class MainWindow : Window
         }
     }
 
-    //// The entry point of the application
-    //[STAThread]
-    //public static void Main(string[] args)
-    //{
-    //    var app = new Application();
-    //    app.Run(new MainWindow());
-    //}
+    private void Timer_Tick(object sender, EventArgs e)
+    {
+        // Update the time every second
+        UpdateTime();
+    }
+
+    private void UpdateTime()
+    {
+        if (!_initialized)
+        {
+            return;
+        }
+        if (UTCCheckBox.IsChecked == true)
+        {
+            DateTimeTextBox.Text = DateTime.UtcNow.ToString(CultureInfo.CurrentCulture);
+        }
+        else
+        {
+            DateTimeTextBox.Text = DateTime.Now.ToString(CultureInfo.CurrentCulture);
+        }
+
+        //RaisePropertyChanged(nameof(DateTimeTextBox));
+    }
+
+    private void UtcCheckBox_Checked(object sender, RoutedEventArgs e)
+    {
+        UpdateTime();
+    }
+
+    private void UtcCheckBox_Unchecked(object sender, RoutedEventArgs e)
+    {
+        UpdateTime();
+    }
+
+    private void RealtimeCheckBox_Checked(object sender, RoutedEventArgs e)
+    {
+        UpdateTime();
+    }
+
+    private void RealtimeCheckBox_Unchecked(object sender, RoutedEventArgs e)
+    {
+    }
 }

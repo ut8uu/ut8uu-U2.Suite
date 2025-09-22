@@ -63,8 +63,12 @@
                 <!-- Date/Time Section -->
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <TextBlock Text="Date/Time" Style="{StaticResource FormTextBlockLabelStyle}"/>
-                    <CheckBox x:Name="RealTimeCheckBox" Content="Real-time" IsChecked="True" Style="{StaticResource FormCheckBoxStyle}" />
-                    <CheckBox x:Name="UTCCheckBox" Content="UTC" IsChecked="True" Style="{StaticResource FormCheckBoxStyle}" />
+                    <CheckBox x:Name="RealTimeCheckBox" Content="Real-time" 
+                        IsChecked="True" Style="{StaticResource FormCheckBoxStyle}" 
+                        Checked="RealtimeCheckBox_Checked" Unchecked="RealtimeCheckBox_Unchecked"/>
+                    <CheckBox x:Name="UTCCheckBox" Content="UTC" 
+                        IsChecked="True" Style="{StaticResource FormCheckBoxStyle}" 
+                        Checked="UtcCheckBox_Checked" Unchecked="UtcCheckBox_Unchecked"/>
 
                     <TextBox x:Name="DateTimeTextBox" IsReadOnly="True" IsEnabled="False" Style="{StaticResource FormTextBoxStyle}" VerticalAlignment="Center"/>
                 </StackPanel>
