@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System.Collections.ObjectModel;
+using System.Net.Http;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,9 +22,34 @@ public partial class MainWindow : Window
     private readonly TextBox rcvdTextBox;
     private readonly Button saveButton;
 
+    public ObservableCollection<Core.Models.QSO> QSOs { get; set; }
+
     public MainWindow()
     {
         InitializeComponent();
+
+        QSOs = [];
+        QSODataGrid.ItemsSource = QSOs;
+
+        PopulateControls();
+    }
+
+    private void PopulateControls()
+    {
+        // Populate the Band combo box with common amateur radio bands.
+        string[] bands = { "160m", "80m", "60m", "40m", "30m", "20m", "17m", "15m", "12m", "10m", "6m", "2m", "70cm" };
+        BandComboBox.ItemsSource = bands;
+        BandComboBox.SelectedIndex = 0;
+
+        // Populate the Mode combo box with common amateur radio modes.
+        string[] modes = { "AM", "ATV", "BPSK", "CW", "Data", "DIGITALVOICE", "DSTAR", "DV", "FAX", "FM", "FT8", "HELL", "MFSK", "MS", "MT63", "OLIVIA", "PACKET", "PSK31", "RTTY", "SSTV", "SSB", "THROB", "TOR", "V4", "VOI", "WSPR" };
+        ModeComboBox.ItemsSource = modes;
+        ModeComboBox.SelectedIndex = 0;
+
+        // Populate the Propagation combo box.
+        string[] propagations = { "", "Ionospheric", "Satellite", "EME", "Aurora", "Sporadic E", "Meteor Scatter", "Tropospheric Ducting", "Ground Wave" };
+        PropagationComboBox.ItemsSource = propagations;
+        PropagationComboBox.SelectedIndex = 0;
     }
 
     private async void SaveButton_Click(object sender, RoutedEventArgs e)
