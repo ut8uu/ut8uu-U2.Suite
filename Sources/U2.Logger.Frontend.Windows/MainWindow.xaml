@@ -70,7 +70,13 @@
                         IsChecked="True" Style="{StaticResource FormCheckBoxStyle}" 
                         Checked="UtcCheckBox_Checked" Unchecked="UtcCheckBox_Unchecked"/>
 
-                    <TextBox x:Name="DateTimeTextBox" IsReadOnly="True" IsEnabled="False" Style="{StaticResource FormTextBoxStyle}" VerticalAlignment="Center"/>
+                    <TextBox x:Name="DateTimeTextBox" IsReadOnly="True" 
+                        IsEnabled="False" Style="{StaticResource FormTextBoxStyle}" VerticalAlignment="Center"/>
+
+                    <StackPanel x:Name="DateTimePickers" Orientation="Horizontal" Margin="5,0,0,0">
+                        <DatePicker x:Name="DatePicker" Width="100"/>
+                        <TextBox x:Name="TimeTextBox" Width="100" Margin="5,0,0,0" Style="{StaticResource FormTextBoxStyle}"/>
+                    </StackPanel>
                 </StackPanel>
 
                 <!-- Band/Mode/Propagation Section -->

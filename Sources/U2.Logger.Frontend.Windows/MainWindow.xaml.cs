@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -46,6 +45,10 @@ public partial class MainWindow : Window
         _timer.Start();
 
         _initialized = true;
+
+        RealTimeCheckBox.IsChecked = true;
+        DateTimePickers.Visibility = Visibility.Collapsed;
+        DateTimeTextBox.Visibility = Visibility.Visible;
     }
 
     private void PopulateControls()
@@ -160,10 +163,20 @@ public partial class MainWindow : Window
 
     private void RealtimeCheckBox_Checked(object sender, RoutedEventArgs e)
     {
+        if (!_initialized) { return; }
         UpdateTime();
+
+        UTCCheckBox.Visibility = Visibility.Visible;
+        DateTimeTextBox.Visibility = Visibility.Visible;
+        DateTimePickers.Visibility = Visibility.Collapsed;
     }
 
     private void RealtimeCheckBox_Unchecked(object sender, RoutedEventArgs e)
     {
+        if (!_initialized) { return; }
+
+        UTCCheckBox.Visibility = Visibility.Collapsed;
+        DateTimeTextBox.Visibility = Visibility.Collapsed;
+        DateTimePickers.Visibility = Visibility.Visible;
     }
 }
